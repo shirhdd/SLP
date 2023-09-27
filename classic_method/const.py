@@ -1,0 +1,8 @@
+# EXAMPLE WAV FILE PATH
+SUCCESS_PHONEME_RECOGNITION_EXAMPLE_WAV_FILE_PATH = 'C:\\Users\\itayy\\Desktop\\engineering_projects\\shalom_example.wav'
+
+# METHOD CONSTS
+WINDOW_LENGTH = 30 * 0.001
+OVERLAP = 50
+DT = 29 * 0.001
+ETA = 1.5
