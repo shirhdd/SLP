@@ -114,6 +114,9 @@ def get_wav_names(folder_path):
 
 
 def search_driver():
+    phoneme_mfcc_numpy_representation = []
+    phoneme_tag_representation = []
+    phoneme_wav_numpy_representation = []
     sub_dir = fast_scandir(TIMIT_TRAIN_FOLDER_PATH)
     for dir_path in sub_dir:
         print(f"finish dir {dir_path}")
@@ -122,9 +125,7 @@ def search_driver():
             split_audio(audio_file_phoneme)
 
 
-phoneme_mfcc_numpy_representation = []
-phoneme_tag_representation = []
-phoneme_wav_numpy_representation = []
+
 search_driver()
 
 npy_phoneme_folder = NPY_PROCESSED_FOLDER_PATH_TRAIN
