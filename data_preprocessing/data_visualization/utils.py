@@ -1,4 +1,6 @@
+import librosa
 import numpy as np
+from matplotlib import pyplot as plt
 from scipy.signal import spectrogram
 from python_speech_features import mfcc
 
@@ -23,7 +25,7 @@ def spectrogram_creation(y, sr, index=None):
     # Calculate the spectrogram with Hamming window
     frequencies, times, Sxx = spectrogram(y, sr, window=np.hamming(nperseg), nperseg=nperseg, noverlap=noverlap)
 
-    # Plot the spectrogram
+    # # Plot the spectrogram
     # plt.pcolormesh(times, frequencies, 10 * np.log10(Sxx), shading='gouraud')
     # plt.colorbar(label='Intensity [dB]')
     # plt.ylabel('Frequency [Hz]')
@@ -63,10 +65,9 @@ def mfcc_spectrogram_creation(y, sr, index=None):
     # plt.show()
     return mfcc_features
 
-#
-# sr, y = wavfile.read('C:\\Users\\itayy\\Desktop\\engineering_projects\\shalom_example.wav')
-# spectrogram_creation(y, sr,
-#                      index=None)
-# s = mfcc_spectrogram_creation(y, sr,
-#                           index=None)
+
+y, sr = librosa.load('C:\\Users\\itayy\\Desktop\\engineering_projects\\shalom_example.wav', sr=16000)
+spectrogram_creation(y, sr,index=None)
+s = mfcc_spectrogram_creation(y, sr,
+                          index=None)
 
