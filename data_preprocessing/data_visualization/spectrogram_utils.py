@@ -25,13 +25,13 @@ def spectrogram_creation(y, sr, index=None):
     # Calculate the spectrogram with Hamming window
     frequencies, times, Sxx = spectrogram(y, sr, window=np.hamming(nperseg), nperseg=nperseg, noverlap=noverlap)
 
-    # # Plot the spectrogram
-    # plt.pcolormesh(times, frequencies, 10 * np.log10(Sxx), shading='gouraud')
-    # plt.colorbar(label='Intensity [dB]')
-    # plt.ylabel('Frequency [Hz]')
-    # plt.xlabel('Time [sec]')
-    # plt.title('Spectrogram with Hamming Window')
-    # plt.show()
+    # Plot the spectrogram
+    plt.pcolormesh(times, frequencies, 10 * np.log10(Sxx), shading='gouraud')
+    plt.colorbar(label='Intensity [dB]')
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.title('Spectrogram with Hamming Window')
+    plt.show()
     return times, frequencies, 10 * np.log10(Sxx)
 
 
@@ -49,6 +49,7 @@ def mfcc_spectrogram_creation(y, sr, index=None):
     """
     if index:
         y = y[index[0]:index[1]]
+
     mfcc_features = mfcc(y, samplerate=sr, winlen=0.025, winstep=0.01, numcep=13, nfilt=26, nfft=512, lowfreq=0,
                          highfreq=None, preemph=0.97, winfunc=np.hamming)
 
