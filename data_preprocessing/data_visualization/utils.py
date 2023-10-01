@@ -67,7 +67,6 @@ def mfcc_spectrogram_creation(y, sr, index=None):
 
 
 y, sr = librosa.load('C:\\Users\\itayy\\Desktop\\engineering_projects\\shalom_example.wav', sr=16000)
-spectrogram_creation(y, sr,index=None)
+spectrogram_creation(y, sr, index=None)
 s = mfcc_spectrogram_creation(y, sr,
-                          index=None)
-
+                              index=None)
