@@ -163,3 +163,13 @@ def segmentation(signal, winlen, eta, dt, Fs, Idx):
 
     return seg_ind, delta
 
+
+
+
+
+
+
+
+
+
+

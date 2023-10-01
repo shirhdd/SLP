@@ -6,6 +6,7 @@ from scipy.io import wavfile
 from sklearn import preprocessing
 import librosa
 
+from data_preprocessing.data_visualization.utils import mfcc_spectrogram_creation
 from data_preprocessing.phonemes.const import TIMIT_TRAIN_FOLDER_PATH, PHONEME_REPRESENTATION_ARRAY_LENGTH, \
     PADDING_IN_SAMPLES, PHONEME_WORKING_SET, TIMIT_DEFAULT_SR, PROCESSED_TRAIN_FOLDER_PATH, \
     NPY_PROCESSED_FOLDER_PATH_TRAIN
@@ -78,8 +79,7 @@ def split_audio(audio_file_phoneme):
             # Generate the new file name
             new_file_name = f'{ph}@{num_files + 1}.wav'
 
-            mfcc = librosa.feature.mfcc(y=portion, sr=TIMIT_DEFAULT_SR, n_fft=2048, hop_length=64, n_mfcc=39,
-                                        norm='ortho')
+            mfcc = mfcc_spectrogram_creation(y=portion, sr=TIMIT_DEFAULT_SR)
 
             # Center MFCC coefficient dimensions to the mean and unit variance
             mfcc = preprocessing.scale(mfcc, axis=1)
@@ -94,7 +94,7 @@ def split_audio(audio_file_phoneme):
             # Save the portion as a WAV file using scipy
 
             # todo: in order to save the new wav this should be uncmment
-            wavfile.write(new_file_path, sr, portion)
+            # wavfile.write(new_file_path, sr, portion)
 
 
 def get_wav_names(folder_path):
@@ -120,26 +120,9 @@ def search_driver():
         phoneme_annotations = audio_phoneme_annotations(get_wav_names(dir_path))
         for audio_file_phoneme in phoneme_annotations:
             split_audio(audio_file_phoneme)
+    return phoneme_wav_numpy_representation, phoneme_tag_representation , phoneme_mfcc_numpy_representation
 
 
 phoneme_mfcc_numpy_representation = []
 phoneme_tag_representation = []
 phoneme_wav_numpy_representation = []
-search_driver()
-
-npy_phoneme_folder = NPY_PROCESSED_FOLDER_PATH_TRAIN
-
-# For phoneme_mfcc_numpy_representation
-filename = "phoneme_mfcc_numpy_representation.npy"
-full_path = os.path.join(npy_phoneme_folder, filename)
-np.save(full_path, phoneme_mfcc_numpy_representation)
-
-# For phoneme_tag_representation
-filename = "phoneme_tag_representation.npy"
-full_path = os.path.join(npy_phoneme_folder, filename)
-np.save(full_path, phoneme_tag_representation)
-
-# For phoneme_wav_numpy_representation
-filename = "phoneme_wav_numpy_representation.npy"
-full_path = os.path.join(npy_phoneme_folder, filename)
-np.save(full_path, phoneme_wav_numpy_representation)
