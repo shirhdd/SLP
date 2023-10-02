@@ -5,8 +5,8 @@ recognizer = sr.Recognizer()
 ''' recording the sound '''
 
 
-def textIt(wav):
-    with sr.AudioFile("./sample_audio/"+wav) as source:
+def textIt(file_path):
+    with sr.AudioFile(file_path) as source:
         recorded_audio = recognizer.listen(source)
         print("Done recording")
 
@@ -23,4 +23,6 @@ def textIt(wav):
         print(ex)
 
 
-textIt("speech.wav")
+textIt("C:\\Users\\itayy\\Desktop\\SLP\\thought.wav")
+
+
