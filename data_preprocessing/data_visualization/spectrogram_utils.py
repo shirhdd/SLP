@@ -1,3 +1,5 @@
+import os
+
 import librosa
 import numpy as np
 from matplotlib import pyplot as plt
@@ -5,7 +7,7 @@ from scipy.signal import spectrogram
 from python_speech_features import mfcc
 
 
-def spectrogram_creation(y, sr, index=None, times=None):
+def spectrogram_creation(y, sr, index=None, times=None,wav_name=None):
     """
     Compute and plot the spectrogram of the given audio signal with annotated time intervals.
 
@@ -36,7 +38,7 @@ def spectrogram_creation(y, sr, index=None, times=None):
     plt.colorbar(label='Intensity [dB]')
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
-    plt.title('Spectrogram with Hamming Window')
+    plt.title(f'Spectrogram with Hamming Window for wav {wav_name}')
 
     # Annotate time intervals on the plot
     if times:
@@ -81,10 +83,12 @@ def mfcc_spectrogram_creation(y, sr, index=None):
     return mfcc_features
 
 
-y, sr = librosa.load('C:\\Users\\itayy\\Desktop\\wrods\\thing.wav', sr=16000)
+y, sr = librosa.load(f'{os.path.join(os.getcwd(), os.pardir, os.pardir)}\\sample_audio\\thing.wav', sr=16000)
+spectrogram_creation(y, sr, index=(int(1.3 * 16000),int(1.53 * 16000)),wav_name='thing.wav')
+y, sr = librosa.load(f'{os.path.join(os.getcwd(), os.pardir, os.pardir)}\\sample_audio\\sing.wav', sr=16000)
 # spectrogram_creation(y, sr, index=None,times=[(1.08, 1.2, 'S'), (1.2, 1.3, 'IH'), (1.3, 1.53, 'NG'), (1.53, 1.93, '[SIL]')])
 # spectrogram_creation(y, sr, index=None,times=[(0.0, 1.08, '[SIL]'), (1.08, 1.22, 'TH'), (1.22, 1.3, 'IH'), (1.3, 1.53, 'NG'), (1.53, 1.93, '[SIL]')])
-spectrogram_creation(y, sr, index=(int(1.3 * 16000),int(1.53 * 16000)))
+spectrogram_creation(y, sr, index=(int(1.3 * 16000),int(1.53 * 16000)),wav_name='sing.wav')
 # s = mfcc_spectrogram_creation(y, sr,index=None)
 
 # thing -> sing ( thing with sing transcript )
