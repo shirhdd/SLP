@@ -56,8 +56,9 @@ def phonetic_aligner(audio_file, expected_transcript):
     #     print("wrong pronouncing of s in sing")
     #     return word_times, False
 
-file_path = f'{os.getcwd()}\\sample_audio\\sing.wav'
-expected_transcript = "sing"
-phonetic_aligner(file_path, expected_transcript)
+# file_path = f'{os.getcwd()}\\sample_audio\\sing.wav'
+# expected_transcript = "sing"
+# phonetic_aligner(file_path, expected_transcript)
+print(extract_word_time(charsiu_result()))
 # case 2 extracted_transcript == expected_transcript
 
