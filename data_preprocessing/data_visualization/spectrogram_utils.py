@@ -90,6 +90,10 @@ y, sr = librosa.load(f'{os.path.join(os.getcwd(), os.pardir, os.pardir)}\\sample
 # spectrogram_creation(y, sr, index=None,times=[(0.0, 1.08, '[SIL]'), (1.08, 1.22, 'TH'), (1.22, 1.3, 'IH'), (1.3, 1.53, 'NG'), (1.53, 1.93, '[SIL]')])
 spectrogram_creation(y, sr, index=(int(1.3 * 16000),int(1.53 * 16000)),wav_name='sing.wav')
 # s = mfcc_spectrogram_creation(y, sr,index=None)
+t_vec = np.linspace(0,1000,y.shape[0])
+y_new = np.sin(2*np.pi*1000*t_vec)
+plt.plot(t_vec,y_new)
+plt.show()
 
 # thing -> sing ( thing with sing transcript )
 # ([(0.0, 1.08, '[SIL]'), (1.08, 1.2, 'S'), (1.2, 1.3, 'IH'), (1.3, 1.53, 'NG'), (1.53, 1.93, '[SIL]')],

@@ -1,4 +1,7 @@
-from speech_recognition.wav_to_text import textIt
+import os
+
+from speech_recognise.wav_to_text import textIt
+
 
 # sing -> sing ( sing with sing transcript )
 # ([(0.0, 1.28, '[SIL]'), (1.28, 1.55, 'S'), (1.55, 1.67, 'IH'), (1.67, 1.9, 'NG'), (1.9, 2.01, '[SIL]')],
@@ -53,7 +56,7 @@ def phonetic_aligner(audio_file, expected_transcript):
     #     print("wrong pronouncing of s in sing")
     #     return word_times, False
 
-file_path = "C:\\Users\\itayy\\Desktop\\wrods\\sing.wav"
+file_path = f'{os.getcwd()}\\sample_audio\\sing.wav'
 expected_transcript = "sing"
 phonetic_aligner(file_path, expected_transcript)
 # case 2 extracted_transcript == expected_transcript
