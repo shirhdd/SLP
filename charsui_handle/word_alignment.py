@@ -30,9 +30,9 @@ def forced_alignment(audio_file, textgrid_file,txt_file):
 
 def main():
     # load data
-    audio_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\audio\sing.wav'
-    textgrid_file = r'C:\Users\shirh\PycharmProjects\SLP\example_sing.TextGrid'
-    txt_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\text\sing.txt'
+    audio_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\audio\thing.wav'
+    textgrid_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\textGrid\example_thing.TextGrid'
+    txt_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\text\thing.txt'
 
     forced_alignment(audio_file,textgrid_file,txt_file)
 
