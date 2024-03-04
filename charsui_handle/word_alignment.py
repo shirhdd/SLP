@@ -1,8 +1,11 @@
 import os
 import sys
+from scipy.io import wavfile
+from scipy.signal import resample
 
 # change this path to where you saved the charsiu package
-charsiu_dir = r'C:\Users\\shirh\\PycharmProjects\\SLP\\charsiu\\'
+ENV = r'C:\Users\shirh\PycharmProjects\SLP'
+charsiu_dir = fr'{ENV}\\charsiu\\'
 os.chdir(charsiu_dir)
 sys.path.append('%s\src\\' % charsiu_dir)
 from Charsiu import charsiu_predictive_aligner
@@ -21,6 +24,17 @@ def textless_alignment(audio_file, textgrid_file):
     charsiu.serve(audio=audio_file, save_to=textgrid_file)
 
 
+def resample_wav(input_file, target_fs):
+    # Read the input wav file
+    fs, data = wavfile.read(input_file)
+
+    # Resample the data
+    resampled_data = resample(data, int(len(data) * target_fs / fs))
+
+    # Write the resampled data to a new wav file
+    wavfile.write(input_file, target_fs, resampled_data.astype(data.dtype))
+
+
 def forced_alignment(audio_file, textgrid_file, txt_file):
     charsiu = charsiu_forced_aligner(aligner='charsiu/en_w2v2_fc_10ms')
     with open(txt_file) as f:
@@ -32,10 +46,10 @@ def forced_alignment(audio_file, textgrid_file, txt_file):
 
 def main():
     # load data
-    audio_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\audio\thing.wav'
-    textgrid_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\textGrid\example_thing.TextGrid'
-    txt_file = r'C:\Users\shirh\PycharmProjects\SLP\samples\text\thing.txt'
-
+    audio_file = fr'{ENV}\samples\audio\white.wav'
+    textgrid_file = fr'{ENV}\samples\textGrid\example_white.TextGrid'
+    txt_file = fr'{ENV}\samples\text\white.txt'
+    resample_wav(audio_file, 16000)
     forced_alignment(audio_file, textgrid_file, txt_file)
 
 

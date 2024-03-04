@@ -1,4 +1,6 @@
 import json
+
+import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from keras import layers
@@ -97,4 +99,5 @@ net = Network()
 model = load_model(r'../samples/model_trained.h5')
 spectogram, _ = Preprocessor().preprocess(
     r'../samples/audio/wrong_phoneme.wav', "")
+spectogram = np.expand_dims(spectogram, axis=0)
 print(model.predict(spectogram))

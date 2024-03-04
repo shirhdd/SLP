@@ -111,4 +111,4 @@ def runner(wrong_word: str, correct_word: str):
         format="wav")
 
 
-runner("thing", "sing")
+runner("right", "white")
