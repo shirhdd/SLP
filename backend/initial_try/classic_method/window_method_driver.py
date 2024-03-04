@@ -2,8 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.io import wavfile
 
-from classic_method.const import SUCCESS_PHONEME_RECOGNITION_EXAMPLE_WAV_FILE_PATH, WINDOW_LENGTH, OVERLAP, ETA, DT
-from classic_method.window_method_utils import preprocess, FindWordIdx, segmentation
+from backend.initial_try.classic_method.const import SUCCESS_PHONEME_RECOGNITION_EXAMPLE_WAV_FILE_PATH, WINDOW_LENGTH, OVERLAP, ETA, DT
+from backend.initial_try.classic_method.window_method_utils import preprocess, FindWordIdx, segmentation
 
 # PART 1: PLOT THE SIGNAL
 alpha = 0.99

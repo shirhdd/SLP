@@ -7,7 +7,7 @@ from sklearn import preprocessing
 import librosa
 
 from data_preprocessing.data_visualization.utils import mfcc_spectrogram_creation
-from data_preprocessing.phonemes.const import TIMIT_TRAIN_FOLDER_PATH, PHONEME_REPRESENTATION_ARRAY_LENGTH, \
+from backend.initial_try.data_preprocessing.phonemes.const import TIMIT_TRAIN_FOLDER_PATH, PHONEME_REPRESENTATION_ARRAY_LENGTH, \
     PADDING_IN_SAMPLES, PHONEME_WORKING_SET, TIMIT_DEFAULT_SR, PROCESSED_TRAIN_FOLDER_PATH, \
     NPY_PROCESSED_FOLDER_PATH_TRAIN
 

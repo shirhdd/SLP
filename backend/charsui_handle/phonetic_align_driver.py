@@ -1,6 +1,6 @@
 import os
 
-from speech_recognise.wav_to_text import textIt
+from backend.speech_recognise.wav_to_text import textIt
 
 
 # sing -> sing ( sing with sing transcript )

@@ -2,8 +2,8 @@ import os
 
 import numpy as np
 
-from data_preprocessing.phonemes.const import NPY_PROCESSED_FOLDER_PATH_TRAIN
-from data_preprocessing.phonemes.split_phoneme_utils import search_driver
+from backend.initial_try.data_preprocessing.phonemes.const import NPY_PROCESSED_FOLDER_PATH_TRAIN
+from backend.initial_try.data_preprocessing.phonemes.split_phoneme_utils import search_driver
 
 phoneme_wav_numpy_representation, phoneme_tag_representation , phoneme_mfcc_numpy_representation = search_driver()
 

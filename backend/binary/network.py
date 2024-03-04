@@ -7,7 +7,7 @@ from keras import layers
 from keras import models
 from tensorflow.keras.models import save_model, load_model
 
-from binary.Preprocessor import Preprocessor
+from backend.binary.Preprocessor import Preprocessor
 
 ENVIRONMENT_VAR = r'C:\Users\shirh\Dropbox\My PC (LAPTOP-NNRDF68A)\Documents\BSC\Year 4\Semester H\engineer_1'
 
