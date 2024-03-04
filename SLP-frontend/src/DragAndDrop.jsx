@@ -17,12 +17,17 @@ const DragAndDrop = ({ word }) => {
         if (file) {
             try {
                 const formData = new FormData();
-                formData.append('music_file', file);
+                formData.append('file', file);
 
                 const response = await fetch('http://127.0.0.1:5000/predict', {
                     method: 'POST',
                     body: formData,
                 });
+
+                if (response.ok) {
+                    const result = await response.json(); // Parse response JSON
+                    console.log('Response from server:', result);
+                }
 
                 if (response.ok) {
                     console.log('File uploaded successfully');

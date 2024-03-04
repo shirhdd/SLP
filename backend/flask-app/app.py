@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify
 import random
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Function to perform prediction using a model
 def predict_wav(wav_file):
