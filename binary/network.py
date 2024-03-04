@@ -3,6 +3,9 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 from keras import layers
 from keras import models
+from tensorflow.keras.models import save_model, load_model
+
+from binary.Preprocessor import Preprocessor
 
 ENVIRONMENT_VAR = r'C:\Users\shirh\Dropbox\My PC (LAPTOP-NNRDF68A)\Documents\BSC\Year 4\Semester H\engineer_1'
 
@@ -72,6 +75,10 @@ class Network:
                                tf.keras.metrics.Precision()])
         hist = model.fit(train, epochs=4, validation_data=test)
         self.ploting_graph(hist)
+        save_model(model, r'../samples/model_trained.h5')
+        return model, train, test
+
+    def testing(self, model, test):
         X_test, y_test = test.as_numpy_iterator().next()
         yhat = model.predict(X_test)
         yhat = [1 if prediction > 0.5 else 0 for prediction in yhat]
@@ -79,4 +86,15 @@ class Network:
         print(y_test)
 
 
-Network().model_train()
+net = Network()
+# Training model #
+# model, train, test = net.model_train()
+
+# Testing #
+# net.testing(model, test)
+
+# Show scores #
+model = load_model(r'../samples/model_trained.h5')
+spectogram, _ = Preprocessor().preprocess(
+    r'../samples/audio/wrong_phoneme.wav', "")
+print(model.predict(spectogram))

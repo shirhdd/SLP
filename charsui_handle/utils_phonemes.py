@@ -1,6 +1,6 @@
 from pydub import AudioSegment
 
-from pydub import AudioSegment
+ENV = r'C:\Users\shirh\PycharmProjects\SLP'
 
 
 def inject_phoneme(first_wav_path, second_wav_path, phoneme_intervals):
@@ -76,16 +76,33 @@ def find_phoneme_order_differences(dict1, dict2):
     return differences
 
 
+def cut_wrong_phoneme(wav_path, wrong_interval, output_path):
+    # Load the WAV file
+    audio = AudioSegment.from_wav(wav_path)
+
+    # Initialize an empty audio segment to hold the wrong phoneme parts
+    wrong_phoneme_audio = AudioSegment.silent(duration=0)
+
+    start_time, end_time = wrong_interval
+    wrong_phoneme_audio += audio[start_time * 1000:end_time * 1000]
+
+    # Export the wrong phoneme parts to a new WAV file
+    wrong_phoneme_audio.export(output_path, format="wav")
+
+
 def runner(wrong_word: str, correct_word: str):
-    file_path_wrong_word = fr'C:\Users\shirh\PycharmProjects\SLP\samples\textGrid\example_{wrong_word}.TextGrid'
+    file_path_wrong_word = fr'{ENV}\samples\textGrid\example_{wrong_word}.TextGrid'
     wrong_word_json = textGridToJson(file_path_wrong_word)
-    file_path_correct_word = fr'C:\Users\shirh\PycharmProjects\SLP\samples\textGrid\example_{correct_word}.TextGrid'
+    file_path_correct_word = fr'{ENV}\samples\textGrid\example_{correct_word}.TextGrid'
     correct_word_json = textGridToJson(file_path_correct_word)
     phoneme_intervals = find_phoneme_order_differences(correct_word_json,
                                                        wrong_word_json)
     print(phoneme_intervals)
-    first_wav_path = fr'C:\Users\shirh\PycharmProjects\SLP\samples\audio\{correct_word}.wav'
-    second_wav_path = fr'C:\Users\shirh\PycharmProjects\SLP\samples\audio\{wrong_word}.wav'
+    first_wav_path = fr'{ENV}\samples\audio\{correct_word}.wav'
+    second_wav_path = fr'{ENV}\samples\audio\{wrong_word}.wav'
+
+    cut_wrong_phoneme(second_wav_path, phoneme_intervals[0][0],
+                      fr'{ENV}\samples\audio\wrong_phoneme.wav')
     modified_second_wav = inject_phoneme(first_wav_path, second_wav_path,
                                          phoneme_intervals)
 
@@ -93,4 +110,5 @@ def runner(wrong_word: str, correct_word: str):
         f'../samples/results/{wrong_word}_to_{correct_word}.wav',
         format="wav")
 
-runner("thing","sing")
+
+runner("thing", "sing")

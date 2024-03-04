@@ -78,4 +78,4 @@ class Preprocessor:
             json.dump(serializable_spec, f)
 
 
-Preprocessor().run_all()
+# Preprocessor().run_all()
