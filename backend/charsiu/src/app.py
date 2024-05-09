@@ -119,7 +119,10 @@ def gen_correct_wav(word):
                       textGridToJson(align_record)[1]]
     phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
                          dic.values()]
-    return inject_phoneme(perfect_file, phoneme_intervals)
+    modified_wav =  inject_phoneme(perfect_file, phoneme_intervals)
+    modified_wav.export(
+        f'../samples/results/modified_correct.wav',
+        format="wav")
 
 
 def textGridToJson(textgrid_content):
