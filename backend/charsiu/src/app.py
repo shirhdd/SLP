@@ -2,7 +2,7 @@ import sys
 
 import librosa
 import numpy as np
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 import random
 from flask_cors import CORS
 import os
@@ -22,7 +22,8 @@ CORS(app)
 phoneme_classification_model = load_model(
     'C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\4-s-sh-w-r-11_phonemes_22_epoches.h5')
 
-phoneme_alignment_model = charsiu_forced_aligner(aligner='charsiu/en_w2v2_fc_10ms')
+phoneme_alignment_model = charsiu_forced_aligner(
+    aligner='charsiu/en_w2v2_fc_10ms')
 
 
 def write_file_16k(file):
@@ -67,6 +68,7 @@ def create_spectrogram(audio_cut):
     spectrogram = np.expand_dims(spectrogram, axis=0)
     return spectrogram
 
+
 # def build_json_response(predictions):
 #     print(f"Probabilities of word:")
 #     print(np.round(predictions[0], 2))
@@ -74,7 +76,8 @@ def create_spectrogram(audio_cut):
 #     print(f"Argmax (index of highest probability): {arg_max} with phoneme: {arr[arg_max]}")
 #     print("File processed and resampled to 16000 Hz")
 def build_json_response(predictions):
-    predictions = np.round(predictions[0] * 100).astype(int)    # Sort indices based on values in descending order to easily access top phonemes
+    predictions = np.round(predictions[0] * 100).astype(
+        int)  # Sort indices based on values in descending order to easily access top phonemes
     sorted_indices = np.argsort(-predictions)
     print(predictions)
 
@@ -83,24 +86,26 @@ def build_json_response(predictions):
     top_score = predictions[sorted_indices[0]]
 
     response = {
-        'phonemes': [f"Your {top_phoneme} pronunciation gets a {top_score} score"]
+        'phonemes': [
+            f"Your {top_phoneme} pronunciation gets a {top_score} score"]
     }
 
     # Check if second top phoneme's score is above 30%
     second_top_phoneme = arr[sorted_indices[1]]
     second_top_score = predictions[sorted_indices[1]]
     if second_top_score > 30:
-        response['phonemes'].append(f"Your {second_top_phoneme} pronunciation gets a {second_top_score} score")
+        response['phonemes'].append(
+            f"Your {second_top_phoneme} pronunciation gets a {second_top_score} score")
 
     if top_score >= THRESHOLD and top_phoneme == "s":
         # When the top score is above the threshold, include a successful message
         response['message'] = "Great job!"
     else:
         # When the top score is below the threshold, include an encouragement message
-        response['message'] = "Come on, you can do better! notice your S pronunciation"
+        response[
+            'message'] = "Come on, you can do better! notice your S pronunciation"
 
     return jsonify(response), 200
-
 
 
 @app.route('/predict', methods=['POST'])
@@ -117,7 +122,9 @@ def predict():
         try:
 
             write_file_16k(file)
-            alignment = phoneme_alignment_model.align(audio='processed_.wav', text='song')
+            filename_without_extension = os.path.splitext(file.filename)[0]
+            alignment = phoneme_alignment_model.align(audio='processed_.wav',
+                                                      text=filename_without_extension)
             audio_cut = process_file(alignment)
             spectrogram = create_spectrogram(audio_cut)
             predictions = phoneme_classification_model.predict(spectrogram)
@@ -125,7 +132,8 @@ def predict():
 
             return response
         except Exception as e:
-            return jsonify({'error': 'Failed to process file', 'details': str(e)}), 500
+            return jsonify(
+                {'error': 'Failed to process file', 'details': str(e)}), 500
     else:
         return jsonify({'error': 'Invalid file format'}), 400
 
@@ -136,6 +144,30 @@ def random_word():
     words = ['sing', 'song']
     word = random.choice(words)
     return jsonify({'word': f'{word}'}), 200
+
+
+@app.route('/get_image', methods=['GET'])
+def get_image():
+    image_name = request.args.get('name')
+    if image_name is None:
+        return 'Please provide the image_name parameter', 400
+
+    image_path = os.path.join('../resources/images', image_name, 'jpg')
+    if not os.path.exists(image_path):
+        return 'Image not found', 404
+
+    return send_file(image_path, mimetype='image/jpeg')
+
+
+@app.route('/get_sound', methods=['GET'])
+def upload_sound():
+    # Check if the request contains a file
+    sound_name = request.args.get('name')
+    sound_path = os.path.join('../resources/images', sound_name, '.mp3')
+    if not os.path.exists(sound_path):
+        return 'Image not found', 404
+
+    return send_file(sound_path, mimetype='image/jpeg')
 
 
 # def generate_speech(word, filename='speech.wav'):
