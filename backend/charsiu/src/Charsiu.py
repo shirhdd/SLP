@@ -576,17 +576,18 @@ if __name__ == "__main__":
     '''
     charsiu = charsiu_forced_aligner(aligner='charsiu/en_w2v2_fc_10ms')
     # perform forced alignment
-    alignment = charsiu.align(audio='./local/SA1.WAV',
-                              text='She had your dark suit in greasy wash water all year.')
+    alignment = charsiu.align(audio='C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\s-sh-wav\\song-12.wav',
+                              text='sang')
+    print(alignment)
 
     # Chinese models
-    charsiu = charsiu_predictive_aligner(aligner='charsiu/zh_xlsr_fc_10ms',lang='zh')
-    charsiu.align(audio=audio)
-    charsiu.serve(audio='./local/SSB00050015_16k.wav', save_to='./local/SSB00050015.TextGrid')
-    
-    charsiu = charsiu_forced_aligner(aligner='charsiu/zh_w2v2_tiny_fc_10ms',lang='zh')
-    audio, sr = sf.read('/home/lukeum/Downloads/000001_16k.wav')
-    phones, words = charsiu.align(audio=audio,text='卡尔普陪外孙玩滑梯。')
-    charsiu.serve(audio='./local/SSB00050015_16k.wav', text='经广州日报报道后成为了社会热点。',
-                  save_to='./local/SSB00050015.TextGrid')
+    # charsiu = charsiu_predictive_aligner(aligner='charsiu/zh_xlsr_fc_10ms',lang='zh')
+    # charsiu.align(audio=audio)
+    # charsiu.serve(audio='./local/SSB00050015_16k.wav', save_to='./local/SSB00050015.TextGrid')
+    #
+    # charsiu = charsiu_forced_aligner(aligner='charsiu/zh_w2v2_tiny_fc_10ms',lang='zh')
+    # audio, sr = sf.read('/home/lukeum/Downloads/000001_16k.wav')
+    # phones, words = charsiu.align(audio=audio,text='卡尔普陪外孙玩滑梯。')
+    # charsiu.serve(audio='./local/SSB00050015_16k.wav', text='经广州日报报道后成为了社会热点。',
+    #               save_to='./local/SSB00050015.TextGrid')
     

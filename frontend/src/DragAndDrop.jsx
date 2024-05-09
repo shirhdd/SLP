@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 
 const DragAndDrop = ({ word }) => {
     const [file, setFile] = useState(null);
+    const [response, setResponse] = useState(null); // State to hold the backend response
 
     const handleDrop = (e) => {
         e.preventDefault();
         const droppedFile = e.dataTransfer.files[0];
         if (droppedFile.type === 'audio/wav') {
             setFile(droppedFile);
+            setResponse(null); // Reset response on new file drop
         } else {
             alert('Only WAV files are allowed!');
         }
@@ -27,18 +29,14 @@ const DragAndDrop = ({ word }) => {
                 if (response.ok) {
                     const result = await response.json(); // Parse response JSON
                     console.log('Response from server:', result);
-                }
-
-                if (response.ok) {
-                    console.log('File uploaded successfully');
-                    // Handle success
+                    setResponse(result); // Store the result in state
                 } else {
                     console.error('Failed to upload file');
-                    // Handle failure
+                    alert('Failed to process the file');
                 }
             } catch (error) {
                 console.error('Error uploading file:', error);
-                // Handle error
+                alert('Error uploading file');
             }
         } else {
             alert('Please drop a WAV file first!');
@@ -51,7 +49,7 @@ const DragAndDrop = ({ word }) => {
 
     return (
         <div>
-            <h2>{word || 'default'}</h2>
+            <h2>{word || 'Default Word'}</h2>
             <div
                 style={{
                     width: '200px',
@@ -73,6 +71,16 @@ const DragAndDrop = ({ word }) => {
                 )}
             </div>
             <button onClick={handleSubmit}>Submit</button>
+            {response && (
+                <div>
+                    <h3>{response.message}</h3>
+                    <ul>
+                        {response.phonemes.map((phoneme, index) => (
+                            <li key={index}>{phoneme}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };
