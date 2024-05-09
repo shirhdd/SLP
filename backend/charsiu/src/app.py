@@ -75,7 +75,7 @@ def create_spectrogram(audio_cut):
 #     arg_max = np.argmax(predictions[0])
 #     print(f"Argmax (index of highest probability): {arg_max} with phoneme: {arr[arg_max]}")
 #     print("File processed and resampled to 16000 Hz")
-def build_json_response(predictions):
+def build_json_response(predictions, letter:str):
     predictions = np.round(predictions[0] * 100).astype(
         int)  # Sort indices based on values in descending order to easily access top phonemes
     sorted_indices = np.argsort(-predictions)
@@ -97,13 +97,13 @@ def build_json_response(predictions):
         response['phonemes'].append(
             f"Your {second_top_phoneme} pronunciation gets a {second_top_score} score")
 
-    if top_score >= THRESHOLD and top_phoneme == "s":
+    if top_score >= THRESHOLD and top_phoneme == letter:
         # When the top score is above the threshold, include a successful message
         response['message'] = "Great job!"
     else:
         # When the top score is below the threshold, include an encouragement message
         response[
-            'message'] = "Come on, you can do better! notice your S pronunciation"
+            'message'] = f'Come on, you can do better! notice your {letter} pronunciation'
 
     return jsonify(response), 200
 
@@ -118,6 +118,11 @@ def predict():
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
 
+    word = request.form.get('word')
+
+    if word is None:
+        return 'Word parameter not provided', 400
+
     if file and file.filename.endswith('.wav'):
         try:
 
@@ -128,7 +133,7 @@ def predict():
             audio_cut = process_file(alignment)
             spectrogram = create_spectrogram(audio_cut)
             predictions = phoneme_classification_model.predict(spectrogram)
-            response = build_json_response(predictions)
+            response = build_json_response(predictions, word[0])
 
             return response
         except Exception as e:
@@ -163,11 +168,14 @@ def get_image():
 def upload_sound():
     # Check if the request contains a file
     sound_name = request.args.get('name')
+    if sound_name is None:
+        return 'Please provide the sound_name parameter', 400
     sound_path = os.path.join('../resources/images', sound_name, '.mp3')
     if not os.path.exists(sound_path):
-        return 'Image not found', 404
+        return 'Sound File not found', 404
 
-    return send_file(sound_path, mimetype='image/jpeg')
+    return send_file(sound_path, as_attachment=True,
+                     attachment_filename=sound_name)
 
 
 # def generate_speech(word, filename='speech.wav'):
