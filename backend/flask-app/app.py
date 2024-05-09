@@ -13,7 +13,7 @@ app = Flask(__name__)
 CORS(app)
 
 phoneme_classification_model = load_model(
-    'C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\4-s-sh-w-r-11_phonemes_22_epoches.h5')
+    r'C:\Users\shirh\PycharmProjects\SLP\backend\samples\4-s-sh-w-r-11_phonemes_22_epoches.h5')
 
 # phoneme_alignment_model = charsiu_forced_aligner(aligner='charsiu/en_w2v2_fc_10ms')
 # phoneme_alignment_model = Serve()
