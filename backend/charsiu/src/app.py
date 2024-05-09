@@ -1,5 +1,5 @@
 import sys
-
+from pydub import AudioSegment
 import librosa
 import numpy as np
 from flask import Flask, request, jsonify, send_file
@@ -75,7 +75,7 @@ def create_spectrogram(audio_cut):
 #     arg_max = np.argmax(predictions[0])
 #     print(f"Argmax (index of highest probability): {arg_max} with phoneme: {arr[arg_max]}")
 #     print("File processed and resampled to 16000 Hz")
-def build_json_response(predictions, letter:str):
+def build_json_response(predictions, letter: str):
     predictions = np.round(predictions[0] * 100).astype(
         int)  # Sort indices based on values in descending order to easily access top phonemes
     sorted_indices = np.argsort(-predictions)
@@ -106,6 +106,67 @@ def build_json_response(predictions, letter:str):
             'message'] = f'Come on, you can do better! notice your {letter} pronunciation'
 
     return jsonify(response), 200
+
+
+def gen_correct_wav(word):
+    perfect_file = os.path.join('../samples/audio/', word, ".wav")
+    align_record = phoneme_alignment_model.align(audio='processed_.wav',
+                                                 text=word)
+    align_perfect = phoneme_alignment_model.align(audio=perfect_file,
+                                                  text=word)
+
+    phoneme_firsts = [textGridToJson(align_perfect)[1],
+                      textGridToJson(align_record)[1]]
+    phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
+                         dic.values()]
+    return inject_phoneme(perfect_file, phoneme_intervals)
+
+
+def textGridToJson(textgrid_content):
+    lines = textgrid_content.split('\n')
+
+    phoneme_dict = {}
+
+    start_index = lines.index("5") + 1
+
+    i = start_index  # Start from the line after "5"
+    while i < len(lines) and "IntervalTier" not in lines[i]:
+        start_time = float(lines[i])
+        end_time = float(lines[i + 1])
+        phoneme = lines[i + 2].strip('"')
+        phoneme_dict[(start_time, end_time)] = phoneme
+
+        i += 3  # Move to the next set of phoneme information
+
+    print(phoneme_dict)
+    return phoneme_dict
+
+
+def inject_phoneme(perfect_file, phoneme_intervals):
+    """
+     This function extracts the phoneme segment from the first WAV
+      file based on the specified intervals and inserts it into the second WAV
+      file at the specified insertion point.
+     """
+    perfect_wav = AudioSegment.from_file(perfect_file,
+                                         format="wav")
+
+    recorded_wav = AudioSegment.from_file("processed_.wav", format="wav")
+
+    extracted_phoneme = AudioSegment.silent(duration=0)
+
+    for interval, _, _, _ in phoneme_intervals:
+        start_time, end_time = interval
+        extracted_phoneme += perfect_wav[start_time * 1000:end_time * 1000]
+
+    _, _, insert_interval, _ = phoneme_intervals[0]
+    insert_start, insert_end = insert_interval
+
+    modified_second_wav = recorded_wav[
+                          :insert_start * 1000] + extracted_phoneme + recorded_wav[
+                                                                      insert_end * 1000:]
+
+    return modified_second_wav
 
 
 @app.route('/predict', methods=['POST'])

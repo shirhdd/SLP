@@ -91,18 +91,18 @@ def cut_wrong_phoneme(wav_path, wrong_interval, output_path):
 
 
 def runner(wrong_word: str, correct_word: str):
-    file_path_wrong_word = fr'{ENV}\samples\textGrid\example_{wrong_word}.TextGrid'
+    file_path_wrong_word = fr'{ENV}\backend\samples\textGrid\example_{wrong_word}.TextGrid'
     wrong_word_json = textGridToJson(file_path_wrong_word)
-    file_path_correct_word = fr'{ENV}\samples\textGrid\example_{correct_word}.TextGrid'
+    file_path_correct_word = fr'{ENV}\backend\samples\textGrid\example_{correct_word}.TextGrid'
     correct_word_json = textGridToJson(file_path_correct_word)
     phoneme_intervals = find_phoneme_order_differences(correct_word_json,
                                                        wrong_word_json)
     print(phoneme_intervals)
-    first_wav_path = fr'{ENV}\samples\audio\{correct_word}.wav'
-    second_wav_path = fr'{ENV}\samples\audio\{wrong_word}.wav'
+    first_wav_path = fr'{ENV}\backend\samples\audio\{correct_word}.wav'
+    second_wav_path = fr'{ENV}\backend\samples\audio\{wrong_word}.wav'
 
     cut_wrong_phoneme(second_wav_path, phoneme_intervals[0][0],
-                      fr'{ENV}\samples\audio\wrong_phoneme.wav')
+                      fr'{ENV}\backend\samples\audio\wrong_phoneme.wav')
     modified_second_wav = inject_phoneme(first_wav_path, second_wav_path,
                                          phoneme_intervals)
 
