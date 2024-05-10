@@ -119,7 +119,7 @@ def gen_correct_wav(word):
                       textGridToJson(align_record)[1]]
     phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
                          dic.values()]
-    modified_wav =  inject_phoneme(perfect_file, phoneme_intervals)
+    modified_wav = inject_phoneme(perfect_file, phoneme_intervals)
     modified_wav.export(
         f'../samples/results/modified_correct.wav',
         format="wav")
@@ -198,13 +198,14 @@ def predict():
             spectrogram = create_spectrogram(audio_cut)
             predictions = phoneme_classification_model.predict(spectrogram)
             response = build_json_response(predictions, word[0])
-
-            return response
+            gen_correct_wav(word)
+            return send_file(f'../samples/results/modified_correct.wav',
+                             mimetype='audio/wav'), response
         except Exception as e:
             return jsonify(
                 {'error': 'Failed to process file', 'details': str(e)}), 500
     else:
-        return jsonify({'error': 'Invalid file format'}), 400
+        return None, jsonify({'error': 'Invalid file format'}), 400
 
 
 # Route for returning a random word
