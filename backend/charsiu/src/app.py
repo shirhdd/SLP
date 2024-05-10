@@ -13,6 +13,7 @@ import tensorflow as tf
 import random
 
 from tensorflow.keras.models import load_model
+import pyttsx3
 
 THRESHOLD = 75
 
@@ -108,8 +109,18 @@ def build_json_response(predictions, letter: str):
     return jsonify(response), 200
 
 
+def text_to_speech(text, output_path):
+    # Initialize the text-to-speech engine
+    engine = pyttsx3.init()
+
+    # Save the speech to a WAV file
+    engine.save_to_file(text, output_path)
+    engine.runAndWait()
+
+
 def gen_correct_wav(word):
     perfect_file = os.path.join('../samples/audio/', word, ".wav")
+    text_to_speech(word, perfect_file)
     align_record = phoneme_alignment_model.align(audio='processed_.wav',
                                                  text=word)
     align_perfect = phoneme_alignment_model.align(audio=perfect_file,
