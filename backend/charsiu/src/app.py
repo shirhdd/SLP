@@ -13,6 +13,7 @@ import tensorflow as tf
 import random
 
 from tensorflow.keras.models import load_model
+import pyttsx3
 
 THRESHOLD = 75
 
@@ -108,8 +109,18 @@ def build_json_response(predictions, letter: str):
     return jsonify(response), 200
 
 
+def text_to_speech(text, output_path):
+    # Initialize the text-to-speech engine
+    engine = pyttsx3.init()
+
+    # Save the speech to a WAV file
+    engine.save_to_file(text, output_path)
+    engine.runAndWait()
+
+
 def gen_correct_wav(word):
     perfect_file = os.path.join('../samples/audio/', word, ".wav")
+    text_to_speech(word, perfect_file)
     align_record = phoneme_alignment_model.align(audio='processed_.wav',
                                                  text=word)
     align_perfect = phoneme_alignment_model.align(audio=perfect_file,
@@ -119,7 +130,7 @@ def gen_correct_wav(word):
                       textGridToJson(align_record)[1]]
     phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
                          dic.values()]
-    modified_wav =  inject_phoneme(perfect_file, phoneme_intervals)
+    modified_wav = inject_phoneme(perfect_file, phoneme_intervals)
     modified_wav.export(
         f'../samples/results/modified_correct.wav',
         format="wav")
@@ -198,13 +209,14 @@ def predict():
             spectrogram = create_spectrogram(audio_cut)
             predictions = phoneme_classification_model.predict(spectrogram)
             response = build_json_response(predictions, word[0])
-
-            return response
+            gen_correct_wav(word)
+            return send_file(f'../samples/results/modified_correct.wav',
+                             mimetype='audio/wav'), response
         except Exception as e:
             return jsonify(
                 {'error': 'Failed to process file', 'details': str(e)}), 500
     else:
-        return jsonify({'error': 'Invalid file format'}), 400
+        return None, jsonify({'error': 'Invalid file format'}), 400
 
 
 # Route for returning a random word
