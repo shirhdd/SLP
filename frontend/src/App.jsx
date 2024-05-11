@@ -1,16 +1,18 @@
-import {useState} from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
-import DragAndDrop from "./DragAndDrop.jsx";
-import RandomWord from "./RandomWord.jsx";
+import MainMenu from "./MainMenu";
+import Practice from "./Practice"; // Make sure this component is created
 
 function App() {
     return (
-        <>
-            <RandomWord/>
-            <DragAndDrop/>
-        </>
+        <div className="app-container"> {/* Added class here */}
+            <Router>
+                <Routes>
+                    <Route path="/" element={<MainMenu />} />
+                    <Route path="/practice" element={<Practice />} />
+                </Routes>
+            </Router>
+        </div>
     );
 }
 

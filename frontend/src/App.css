@@ -1,5 +1,22 @@
 #root {
+  /*max-width: 1280px;*/
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+}
+
+.app-container {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+}
+
+.content {
+  flex: 1;
+  overflow: auto; /* If your content might scroll */
+}
+.centered-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  // or adjust based on your layout needs
 }

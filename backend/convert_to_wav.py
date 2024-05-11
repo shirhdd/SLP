@@ -43,4 +43,4 @@ def convert_ogg_to_wav(folder_path):
 
 
 # Replace 'your_folder_path' with the path to the folder containing OGG files
-convert_ogg_to_wav('C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\s-sh-wav')
+convert_ogg_to_wav('C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\w-r-wav')
