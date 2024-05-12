@@ -1,9 +1,10 @@
 import sys
+from io import BytesIO
+
 from pydub import AudioSegment
 import librosa
 import numpy as np
 from flask import Flask, request, jsonify, send_file
-import random
 from flask_cors import CORS
 import os
 from scipy.io import wavfile
@@ -11,6 +12,8 @@ import resampy
 from backend.charsiu.src.Charsiu import charsiu_forced_aligner
 import tensorflow as tf
 import random
+from PIL import Image
+from gtts import gTTS
 
 from tensorflow.keras.models import load_model
 import pyttsx3
@@ -69,13 +72,6 @@ def create_spectrogram(audio_cut):
     spectrogram = np.expand_dims(spectrogram, axis=0)
     return spectrogram
 
-
-# def build_json_response(predictions):
-#     print(f"Probabilities of word:")
-#     print(np.round(predictions[0], 2))
-#     arg_max = np.argmax(predictions[0])
-#     print(f"Argmax (index of highest probability): {arg_max} with phoneme: {arr[arg_max]}")
-#     print("File processed and resampled to 16000 Hz")
 def build_json_response(predictions, letter: str):
     predictions = np.round(predictions[0] * 100).astype(
         int)  # Sort indices based on values in descending order to easily access top phonemes
@@ -131,8 +127,7 @@ def gen_correct_wav(word):
     phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
                          dic.values()]
     modified_wav = inject_phoneme(perfect_file, phoneme_intervals)
-    modified_wav.export(
-        f'../samples/results/modified_correct.wav',
+    modified_wav.export('modified_correct.wav',
         format="wav")
 
 
@@ -183,6 +178,21 @@ def inject_phoneme(perfect_file, phoneme_intervals):
     return modified_second_wav
 
 
+@app.route('/get_correct_pronunciation', methods=['GET'])
+def get_correct_pronunciation():
+    # Get the word from the query parameter
+    word = request.args.get('word', default='default_word', type=str)
+
+    # Generate speech
+    tts = gTTS(text=word, lang='en')
+    tts.save("word.mp3")  # Save the file temporarily
+
+    # Return the file
+    return send_file("word.mp3", as_attachment=True)
+
+
+
+
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
@@ -210,7 +220,7 @@ def predict():
             predictions = phoneme_classification_model.predict(spectrogram)
             response = build_json_response(predictions, word[0])
             gen_correct_wav(word)
-            return send_file(f'../samples/results/modified_correct.wav',
+            return send_file('modified_correct',
                              mimetype='audio/wav'), response
         except Exception as e:
             return jsonify(
@@ -222,22 +232,40 @@ def predict():
 # Route for returning a random word
 @app.route('/random_word', methods=['GET'])
 def random_word():
-    words = ['sing', 'song']
+    words = ['fight','thing','white']
     word = random.choice(words)
     return jsonify({'word': f'{word}'}), 200
 
+@app.route('/random_words', methods=['GET'])  # Updated endpoint name
+def random_words():
+    words = ['fight', 'thing', 'white', 'write', 'sing', 'right', 'light']
+    selected_words = random.sample(words, min(len(words), 5))  # Safely select 4 words
+    return jsonify({'words': selected_words}), 200
+
+def build_path(image_name):
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    # Construct the path to the images directory
+    image_dir = os.path.join(root_dir, 'resources', 'images')
+
+    # Construct the full path to the image
+    image_path = os.path.join(image_dir, image_name + '.jpg')
+    print(image_path)
+    with Image.open(image_path) as img:
+        img.show()
+
+    return image_path
 
 @app.route('/get_image', methods=['GET'])
 def get_image():
     image_name = request.args.get('name')
     if image_name is None:
         return 'Please provide the image_name parameter', 400
-
-    image_path = os.path.join('../resources/images', image_name, 'jpg')
+    image_path = os.path.join('../resources/images', image_name, 'jpeg')
+    image_path = f"C:\\Users\\inbal\\Desktop\\SLP\\backend\\resources\\images\\{image_name}.jpg"
     if not os.path.exists(image_path):
         return 'Image not found', 404
-
-    return send_file(image_path, mimetype='image/jpeg')
+    print(image_path)
+    return send_file(image_path, mimetype='image/jpg')
 
 
 @app.route('/get_sound', methods=['GET'])

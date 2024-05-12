@@ -1,0 +1,10 @@
+/* Wheel.css */
+@keyframes shine {
+    from { color: #000; background: #fff; }
+
+    to { color: #ff0000; background: #4e4ee1; }
+}
+
+.shine-effect {
+    animation: shine 5s forwards;
+}

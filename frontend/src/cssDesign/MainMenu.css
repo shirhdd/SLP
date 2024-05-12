@@ -1,6 +1,8 @@
 .menu-container {
     position: relative;
     text-align: center;
+    background: #535bf2;
+
 }
 
 .character-image {

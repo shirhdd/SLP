@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import RandomWord from "./RandomWord.jsx";
 import DragAndDrop from "./DragAndDrop.jsx";
 import Progressbar from "./Progressbar.jsx";
-
+import ArtificialAudio from "./ArtificialAudio.jsx";
+import './cssDesign/Title.css'
 function Practice() {
     const [score, setScore] = useState(0);
     const maxScore = 100;
     const [percentage, setPercentage] = useState(0);
+    const [word, setWord] = useState(null);
+    const [imageUrl, setImageUrl] = useState('');
 
     useEffect(() => {
         const updatePercentage = () => {
@@ -17,13 +21,34 @@ function Practice() {
         updatePercentage();
     }, [score]);
 
+    useEffect(() => {
+        if (word) {
+            fetchImage(word);
+        }
+    }, [word]);
+
+    const fetchImage = async (word) => {
+        try {
+            const response = await axios.get(`http://localhost:5000/get_image?name=${word}`);
+            setImageUrl(response.config.url); // Assuming your backend sends the direct URL or handles redirection to the image
+        } catch (error) {
+            console.error('Error fetching image:', error);
+            setImageUrl(''); // Reset image URL on error
+        }
+    };
+
     return (
-        <div>
-            <h1>Practice Area</h1>
-            <RandomWord />
-            <DragAndDrop score={score} setScore={setScore} />
-            <Progressbar percentage={percentage} />
-        </div>
+        <>
+            <div>
+                <h1>Practice Area</h1>
+                <ArtificialAudio word={word}/>
+                {word && <div>Word: {word}</div>}
+                <RandomWord setWord={setWord}/>
+                <DragAndDrop setScore={setScore} word={word} />
+                <Progressbar percentage={percentage} />
+                {/*{imageUrl && <img src={imageUrl} alt="Word visual representation" />}*/}
+            </div>
+        </>
     );
 }
 

@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';  // Import a spinner from react-spinners
 
-function DragAndDropComponent({ score, setScore }) {
+function DragAndDropComponent({word, setScore }) {
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -32,7 +32,7 @@ function DragAndDropComponent({ score, setScore }) {
             setLoading(true);
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('word', "example"); // Example word, replace as necessary
+            formData.append('word', word);
 
             try {
                 const response = await axios.post('http://127.0.0.1:5000/predict', formData, {
@@ -42,7 +42,7 @@ function DragAndDropComponent({ score, setScore }) {
                 });
                 console.log(response.data);
                 // Increment score by 10 upon successful response
-                setScore(prevScore => prevScore + 10); // Update the score state by adding 10
+                setScore(prevScore => prevScore + 10);
             } catch (error) {
                 console.error('Error submitting the file:', error);
                 alert('Error submitting the file');
