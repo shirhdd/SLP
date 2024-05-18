@@ -8,7 +8,6 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import os
 from scipy.io import wavfile
-import resampy
 from backend.charsiu.src.Charsiu import charsiu_forced_aligner
 import tensorflow as tf
 import random
@@ -24,7 +23,7 @@ app = Flask(__name__)
 CORS(app)
 
 phoneme_classification_model = load_model(
-    'C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\4-s-sh-w-r-11_phonemes_22_epoches.h5')
+    r'C:\Users\shirhdd\Downloads\7-s-sh-w-r_f_p_l_-3000V-phonemes_22_epoches.h5')
 
 phoneme_alignment_model = charsiu_forced_aligner(
     aligner='charsiu/en_w2v2_fc_10ms')
@@ -72,6 +71,7 @@ def create_spectrogram(audio_cut):
     spectrogram = np.expand_dims(spectrogram, axis=0)
     return spectrogram
 
+
 def build_json_response(predictions, letter: str):
     predictions = np.round(predictions[0] * 100).astype(
         int)  # Sort indices based on values in descending order to easily access top phonemes
@@ -113,22 +113,59 @@ def text_to_speech(text, output_path):
     engine.save_to_file(text, output_path)
     engine.runAndWait()
 
+    # Load the saved audio file
+    audio = AudioSegment.from_wav(output_path)
+
+    # Set the desired sample rate (16000 Hz)
+    desired_sample_rate = 16000
+
+    # Resample the audio to the desired sample rate
+    resampled_audio = audio.set_frame_rate(desired_sample_rate)
+
+    # Export the resampled audio to the same file
+    resampled_audio.export(output_path, format="wav")
+
+    print(f"Audio saved successfully at {output_path} with sample rate of 16000 Hz.")
+
 
 def gen_correct_wav(word):
-    perfect_file = os.path.join('../samples/audio/', word, ".wav")
+    perfect_file = os.path.join(r'C:\Users\shirhdd\PycharmProjects\SLP\backend\samples\results', word + "_robot.wav")
     text_to_speech(word, perfect_file)
     align_record = phoneme_alignment_model.align(audio='processed_.wav',
                                                  text=word)
+    align_record = [interval for interval in align_record[0] if interval[2] != '[SIL]']
     align_perfect = phoneme_alignment_model.align(audio=perfect_file,
                                                   text=word)
+    align_perfect = [interval for interval in align_perfect[0] if interval[2] != '[SIL]']
 
-    phoneme_firsts = [textGridToJson(align_perfect)[1],
-                      textGridToJson(align_record)[1]]
-    phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
-                         dic.values()]
-    modified_wav = inject_phoneme(perfect_file, phoneme_intervals)
+
+    for_inject = transform_intervals([align_perfect[0], align_record[0]])
+    # phoneme_firsts = [tuples_to_dictionary(align_perfect[0])[1],
+    #                   tuples_to_dictionary(align_record[0])[1]]
+    # phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
+    #                      dic.values()]
+    modified_wav = inject_phoneme(perfect_file, for_inject)
     modified_wav.export('modified_correct.wav',
-        format="wav")
+                        format="wav")
+
+
+def transform_intervals(input_intervals):
+    transformed_intervals = []
+
+    for start, end, phoneme in input_intervals:
+        transformed_intervals.append((start, end))
+        transformed_intervals.append(phoneme)
+
+    return transformed_intervals
+
+
+def tuples_to_dictionary(tuples_list):
+    result_dict = {}
+
+    for start, end, phoneme in tuples_list:
+        result_dict[(start, end)] = phoneme
+
+    return result_dict
 
 
 def textGridToJson(textgrid_content):
@@ -191,8 +228,6 @@ def get_correct_pronunciation():
     return send_file("word.mp3", as_attachment=True)
 
 
-
-
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
@@ -232,15 +267,17 @@ def predict():
 # Route for returning a random word
 @app.route('/random_word', methods=['GET'])
 def random_word():
-    words = ['fight','thing','white']
+    words = ['fight', 'thing', 'white']
     word = random.choice(words)
     return jsonify({'word': f'{word}'}), 200
+
 
 @app.route('/random_words', methods=['GET'])  # Updated endpoint name
 def random_words():
     words = ['fight', 'thing', 'white', 'write', 'sing', 'right', 'light']
     selected_words = random.sample(words, min(len(words), 5))  # Safely select 4 words
     return jsonify({'words': selected_words}), 200
+
 
 def build_path(image_name):
     root_dir = os.path.dirname(os.path.abspath(__file__))
@@ -254,6 +291,7 @@ def build_path(image_name):
         img.show()
 
     return image_path
+
 
 @app.route('/get_image', methods=['GET'])
 def get_image():
