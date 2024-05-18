@@ -24,7 +24,7 @@ app = Flask(__name__)
 CORS(app)
 
 phoneme_classification_model = load_model(
-    'C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\4-s-sh-w-r-11_phonemes_22_epoches.h5')
+    'C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\7-s-sh-w-r_f_p_l_-3000V-phonemes_22_epoches.h5')
 
 phoneme_alignment_model = charsiu_forced_aligner(
     aligner='charsiu/en_w2v2_fc_10ms')
@@ -219,9 +219,10 @@ def predict():
             spectrogram = create_spectrogram(audio_cut)
             predictions = phoneme_classification_model.predict(spectrogram)
             response = build_json_response(predictions, word[0])
-            gen_correct_wav(word)
-            return send_file('modified_correct',
-                             mimetype='audio/wav'), response
+            # gen_correct_wav(word)
+            return response
+            # return send_file('modified_correct',
+            #                  mimetype='audio/wav'), response
         except Exception as e:
             return jsonify(
                 {'error': 'Failed to process file', 'details': str(e)}), 500
