@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';  // Import a spinner from react-spinners
 
-function DragAndDropComponent({word, setScore }) {
+function DragAndDropComponent({word, setScore, setResponse}) {
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -41,6 +41,7 @@ function DragAndDropComponent({word, setScore }) {
                     }
                 });
                 console.log(response.data);
+                setResponse(response.data)
                 // Increment score by 10 upon successful response
                 setScore(prevScore => prevScore + 10);
             } catch (error) {

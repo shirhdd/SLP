@@ -9,7 +9,7 @@ function MainMenu() {
         <div className="menu-container">
             <img src={characterImage} alt="Character" className="character-image" />
             <div className="button-container">
-                <button className="menu-button" onClick={() => navigate('/wheel')}>Wheel</button>
+                <button className="menu-button" onClick={() => navigate('/demo')}>Demo</button>
                 <button className="menu-button" onClick={() => navigate('/practice')}>Start Practice</button>
                 <button className="menu-button">Button 3</button>
             </div>

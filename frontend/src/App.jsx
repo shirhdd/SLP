@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import MainMenu from "./MainMenu";
 import Practice from "./Practice";
-import Wheel from "./Wheel.jsx";
+import Demo from "./Demo.jsx"
 
 function App() {
     return (
@@ -11,7 +11,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<MainMenu />} />
                     <Route path="/practice" element={<Practice />} />
-                    <Route path="/wheel" element={<Wheel words={["example - 1","example - 2","example - 3","example - 4"]}/>} />
+                    <Route path="/demo" element={<Demo word={"sing"}/>} />
                 </Routes>
             </Router>
         </div>

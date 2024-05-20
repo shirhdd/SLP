@@ -4,9 +4,11 @@ import RandomWord from "./RandomWord.jsx";
 import DragAndDrop from "./DragAndDrop.jsx";
 import Progressbar from "./Progressbar.jsx";
 import ArtificialAudio from "./ArtificialAudio.jsx";
-import './cssDesign/Title.css'
+import Demo from "./Demo.jsx";
+
 function Practice() {
     const [score, setScore] = useState(0);
+    const [response, setResponse] = useState(null);
     const maxScore = 100;
     const [percentage, setPercentage] = useState(0);
     const [word, setWord] = useState(null);
@@ -23,7 +25,8 @@ function Practice() {
 
     useEffect(() => {
         if (word) {
-            fetchImage(word);
+            // fetchImage(word);
+            console.log("should fetch image")
         }
     }, [word]);
 
@@ -44,9 +47,12 @@ function Practice() {
                 <ArtificialAudio word={word}/>
                 {word && <div>Word: {word}</div>}
                 <RandomWord setWord={setWord}/>
-                <DragAndDrop setScore={setScore} word={word} />
+                <DragAndDrop setScore={setScore} word={word} setResponse={setResponse} />
                 <Progressbar percentage={percentage} />
                 {/*{imageUrl && <img src={imageUrl} alt="Word visual representation" />}*/}
+                {response && <div>{response.message}</div>}
+                {response && <div>{response.phonemes}</div>}
+                <Demo word={"sing"}/>
             </div>
         </>
     );

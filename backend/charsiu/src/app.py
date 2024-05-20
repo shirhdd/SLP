@@ -17,13 +17,16 @@ from gtts import gTTS
 from tensorflow.keras.models import load_model
 import pyttsx3
 
+from backend.charsiu.src.phoneme_replacement import Replacer
+
 THRESHOLD = 75
 
 app = Flask(__name__)
 CORS(app)
 
+
 phoneme_classification_model = load_model(
-    r'C:\Users\shirhdd\Downloads\7-s-sh-w-r_f_p_l_-3000V-phonemes_22_epoches.h5')
+    r'C:\Users\inbal\Desktop\SLP\backend\samples\6-s-sh-r-l-f-p-4000V-phonemes_22_epoches.h5')
 
 
 phoneme_alignment_model = charsiu_forced_aligner(
@@ -33,11 +36,11 @@ phoneme_alignment_model = charsiu_forced_aligner(
 def write_file_16k(file):
     # Load the audio file
     original_sample_rate, audio = wavfile.read(file)
-    output_filename = 'processed_.wav'
+    output_filename = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                                   'user_wav_processed.wav')
     wavfile.write(output_filename, 16000, audio)
 
 
-# taken from prepreocess network file
 def preprocess(wav):
     wav = wav[:1600]
     zero_padding = tf.zeros([1600] - tf.shape(wav), dtype=tf.float32)
@@ -49,8 +52,8 @@ def preprocess(wav):
     return spectrogram
 
 
-arr = ["s", "sh", "r", "w", "l", "f", "p", "th", "d", "t", "y"]
-
+# arr = ["s", "sh", "r", "w", "l", "f", "p", "th", "d", "t", "y"]
+arr = ["s", "sh", "r", "w", "l", "f", "p"]
 
 def load_file():
     # Load the audio file
@@ -88,6 +91,7 @@ def build_json_response(predictions, letter: str):
             f"Your {top_phoneme} pronunciation gets a {top_score} score"]
     }
 
+
     # Check if second top phoneme's score is above 30%
     second_top_phoneme = arr[sorted_indices[1]]
     second_top_score = predictions[sorted_indices[1]]
@@ -106,114 +110,122 @@ def build_json_response(predictions, letter: str):
     return jsonify(response), 200
 
 
-def text_to_speech(text, output_path):
-    # Initialize the text-to-speech engine
-    engine = pyttsx3.init()
-
-    # Save the speech to a WAV file
-    engine.save_to_file(text, output_path)
-    engine.runAndWait()
-
-    # Load the saved audio file
-    audio = AudioSegment.from_wav(output_path)
-
-    # Set the desired sample rate (16000 Hz)
-    desired_sample_rate = 16000
-
-    # Resample the audio to the desired sample rate
-    resampled_audio = audio.set_frame_rate(desired_sample_rate)
-
-    # Expo the resampled audio to the same file
-    resampled_audio.export(output_path, format="wav")
-
-    print(f"Audio saved successfully at {output_path} with sample rate of 16000 Hz.")
-
-
-def gen_correct_wav(word):
-    perfect_file = os.path.join(r'C:\Users\shirhdd\PycharmProjects\SLP\backend\samples\results', word + "_robot.wav")
-    text_to_speech(word, perfect_file)
-    align_record = phoneme_alignment_model.align(audio='processed_.wav',
-                                                 text=word)
-    align_record = [interval for interval in align_record[0] if interval[2] != '[SIL]']
-    align_perfect = phoneme_alignment_model.align(audio=perfect_file,
-                                                  text=word)
-    align_perfect = [interval for interval in align_perfect[0] if interval[2] != '[SIL]']
+# def text_to_speech(text, output_path):
+#     # Initialize the text-to-speech engine
+#     engine = pyttsx3.init()
+#
+#     # Save the speech to a WAV file
+#     engine.save_to_file(text, output_path)
+#     engine.runAndWait()
+#
+#     # Load the saved audio file
+#     audio = AudioSegment.from_wav(output_path)
+#
+#     # Set the desired sample rate (16000 Hz)
+#     desired_sample_rate = 16000
+#
+#     # Resample the audio to the desired sample rate
+#     resampled_audio = audio.set_frame_rate(desired_sample_rate)
+#
+#     # Expo the resampled audio to the same file
+#     resampled_audio.export(output_path, format="wav")
+#
+#     print(f"Audio saved successfully at {output_path} with sample rate of 16000 Hz.")
 
 
-    for_inject = transform_intervals([align_perfect[0], align_record[0]])
-    # phoneme_firsts = [tuples_to_dictionary(align_perfect[0])[1],
-    #                   tuples_to_dictionary(align_record[0])[1]]
-    # phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
-    #                      dic.values()]
-    modified_wav = inject_phoneme(perfect_file, for_inject)
-    modified_wav.export('modified_correct.wav',
-                        format="wav")
+# def gen_correct_wav(word):
+#     perfect_file = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\samples\results', word + "_robot.wav")
+#     text_to_speech(word, perfect_file)
+#     align_record = phoneme_alignment_model.align(audio='processed_.wav',
+#                                                  text=word)
+#     align_record = [interval for interval in align_record[0] if interval[2] != '[SIL]']
+#     align_perfect = phoneme_alignment_model.align(audio=perfect_file,
+#                                                   text=word)
+#     align_perfect = [interval for interval in align_perfect[0] if interval[2] != '[SIL]']
+#
+#     print("1")
+#     for_inject = transform_intervals([align_perfect[0], align_record[0]])
+#     print("2")
+#     # phoneme_firsts = [tuples_to_dictionary(align_perfect[0])[1],
+#     #                   tuples_to_dictionary(align_record[0])[1]]
+#     # phoneme_intervals = [int(value) for dic in phoneme_firsts for value in
+#     #                      dic.values()]
+#     modified_wav = inject_phoneme(perfect_file, for_inject)
+#     print("3")
+#     print(isinstance(modified_wav, AudioSegment))
+#     if isinstance(modified_wav, AudioSegment):
+#         # Export the modified WAV file
+#         output_file = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\samples\results', 'modified_correct.wav')
+#         modified_wav.export(output_file, format="wav")
+#         print("modified_wav was saved!")
+#     else:
+#         raise TypeError("The 'inject_phoneme' function must return a pydub AudioSegment object")
+#
+
+# def transform_intervals(input_intervals):
+#     transformed_intervals = []
+#
+#     for start, end, phoneme in input_intervals:
+#         transformed_intervals.append((start, end))
+#         transformed_intervals.append(phoneme)
+#
+#     return transformed_intervals
 
 
-def transform_intervals(input_intervals):
-    transformed_intervals = []
-
-    for start, end, phoneme in input_intervals:
-        transformed_intervals.append((start, end))
-        transformed_intervals.append(phoneme)
-
-    return transformed_intervals
-
-
-def tuples_to_dictionary(tuples_list):
-    result_dict = {}
-
-    for start, end, phoneme in tuples_list:
-        result_dict[(start, end)] = phoneme
-
-    return result_dict
+# def tuples_to_dictionary(tuples_list):
+#     result_dict = {}
+#
+#     for start, end, phoneme in tuples_list:
+#         result_dict[(start, end)] = phoneme
+#
+#     return result_dict
 
 
-def textGridToJson(textgrid_content):
-    lines = textgrid_content.split('\n')
+# def textGridToJson(textgrid_content):
+#     lines = textgrid_content.split('\n')
+#
+#     phoneme_dict = {}
+#
+#     start_index = lines.index("5") + 1
+#
+#     i = start_index  # Start from the line after "5"
+#     while i < len(lines) and "IntervalTier" not in lines[i]:
+#         start_time = float(lines[i])
+#         end_time = float(lines[i + 1])
+#         phoneme = lines[i + 2].strip('"')
+#         phoneme_dict[(start_time, end_time)] = phoneme
+#
+#         i += 3  # Move to the next set of phoneme information
+#
+#     print(phoneme_dict)
+#     return phoneme_dict
 
-    phoneme_dict = {}
 
-    start_index = lines.index("5") + 1
-
-    i = start_index  # Start from the line after "5"
-    while i < len(lines) and "IntervalTier" not in lines[i]:
-        start_time = float(lines[i])
-        end_time = float(lines[i + 1])
-        phoneme = lines[i + 2].strip('"')
-        phoneme_dict[(start_time, end_time)] = phoneme
-
-        i += 3  # Move to the next set of phoneme information
-
-    print(phoneme_dict)
-    return phoneme_dict
-
-
-def inject_phoneme(perfect_file, phoneme_intervals):
-    """
-     This function extracts the phoneme segment from the first WAV
-      file based on the specified intervals and inserts it into the second WAV
-      file at the specified insertion point.
-     """
-    perfect_wav = AudioSegment.from_file(perfect_file,
-                                         format="wav")
-
-    recorded_wav = AudioSegment.from_file("processed_.wav", format="wav")
-
-    extracted_phoneme = AudioSegment.silent(duration=0)
-
-    for interval, _, _, _ in phoneme_intervals:
-        start_time, end_time = interval
-        extracted_phoneme += perfect_wav[start_time * 1000:end_time * 1000]
-
-    _, _, insert_interval, _ = phoneme_intervals[0]
-    insert_start, insert_end = insert_interval
-
-    modified_second_wav = recorded_wav[
-                          :insert_start * 1000] + extracted_phoneme + recorded_wav[
-                                                                      insert_end * 1000:]
-
-    return modified_second_wav
+# def inject_phoneme(perfect_file, phoneme_intervals):
+#     """
+#      This function extracts the phoneme segment from the first WAV
+#       file based on the specified intervals and inserts it into the second WAV
+#       file at the specified insertion point.
+#      """
+#     perfect_wav = AudioSegment.from_file(perfect_file,
+#                                          format="wav")
+#
+#     recorded_wav = AudioSegment.from_file("processed_.wav", format="wav")
+#
+#     extracted_phoneme = AudioSegment.silent(duration=0)
+#
+#     for interval, _, _, _ in phoneme_intervals:
+#         start_time, end_time = interval
+#         extracted_phoneme += perfect_wav[start_time * 1000:end_time * 1000]
+#
+#     _, _, insert_interval, _ = phoneme_intervals[0]
+#     insert_start, insert_end = insert_interval
+#
+#     modified_second_wav = recorded_wav[
+#                           :insert_start * 1000] + extracted_phoneme + recorded_wav[
+#                                                                       insert_end * 1000:]
+#
+#     return modified_second_wav
 
 
 @app.route('/get_correct_pronunciation', methods=['GET'])
@@ -227,7 +239,6 @@ def get_correct_pronunciation():
 
     # Return the file
     return send_file("word.mp3", as_attachment=True)
-
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -246,24 +257,81 @@ def predict():
 
     if file and file.filename.endswith('.wav'):
         try:
-
             write_file_16k(file)
-            filename_without_extension = os.path.splitext(file.filename)[0]
             alignment = phoneme_alignment_model.align(audio='processed_.wav',
-                                                      text=filename_without_extension)
+                                                      text=word)
             audio_cut = process_file(alignment)
             spectrogram = create_spectrogram(audio_cut)
             predictions = phoneme_classification_model.predict(spectrogram)
             response = build_json_response(predictions, word[0])
-            # gen_correct_wav(word)
             return response
-            # return send_file('modified_correct',
-            #                  mimetype='audio/wav'), response
+
         except Exception as e:
             return jsonify(
                 {'error': 'Failed to process file', 'details': str(e)}), 500
     else:
         return None, jsonify({'error': 'Invalid file format'}), 400
+
+
+@app.route('/speech_inpainting', methods=['GET'])
+def speech_inpainting():
+
+    word = request.args.get('word')  # Use request.args for GET parameters
+
+    if word is None:
+        return 'Word parameter not provided', 400
+
+    artificial_wav_path = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                                       'artificial-' + word + '.wav')
+    user_wav_path = r'C:\Users\inbal\Desktop\SLP\backend\samples\s-sh-wav\shing-6.wav'
+    replacer = Replacer(phoneme_alignment_model, phoneme_classification_model, "sing", artificial_wav_path,
+                        user_wav_path)
+    replacer.generate_artificial_wav()
+    output_filename = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                                   'user_wav_processed.wav')
+    user_alignment = replacer.aligner(output_filename)
+    artificial_alignment = replacer.aligner(artificial_wav_path)
+
+    idx = replacer.identify_error_v1(user_alignment, artificial_alignment)
+    replacer.replace(user_alignment, artificial_alignment, idx, 16000)
+    fix_wav_path = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                                'fix.wav')
+    return send_file(fix_wav_path, as_attachment=True)
+
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     if 'file' not in request.files:
+#         return jsonify({'error': 'No file part'}), 400
+#
+#     file = request.files['file']
+#
+#     if file.filename == '':
+#         return jsonify({'error': 'No selected file'}), 400
+#
+#     word = request.form.get('word')
+#
+#     if word is None:
+#         return 'Word parameter not provided', 400
+#
+#     if file and file.filename.endswith('.wav'):
+#         try:
+#             write_file_16k(file)
+#             filename_without_extension = os.path.splitext(file.filename)[0]
+#             alignment = phoneme_alignment_model.align(audio='processed_.wav',
+#                                                       text=filename_without_extension)
+#             audio_cut = process_file(alignment)
+#             spectrogram = create_spectrogram(audio_cut)
+#             predictions = phoneme_classification_model.predict(spectrogram)
+#             response = build_json_response(predictions, word[0])
+#             gen_correct_wav(word)
+#             # return response
+#             return send_file('modified_correct',
+#                              mimetype='audio/wav'), response
+#         except Exception as e:
+#             return jsonify(
+#                 {'error': 'Failed to process file', 'details': str(e)}), 500
+#     else:
+#         return None, jsonify({'error': 'Invalid file format'}), 400
 
 
 # Route for returning a random word
@@ -277,6 +345,7 @@ def random_word():
 @app.route('/random_words', methods=['GET'])  # Updated endpoint name
 def random_words():
     words = ['fight', 'thing', 'white', 'write', 'sing', 'right', 'light']
+    # words = ['sing','sing','sing','sing','sing','sing','sing','sing','sing','sing','sing']
     selected_words = random.sample(words, min(len(words), 5))  # Safely select 4 words
     return jsonify({'words': selected_words}), 200
 
@@ -310,7 +379,6 @@ def get_image():
 
 @app.route('/get_sound', methods=['GET'])
 def upload_sound():
-    # Check if the request contains a file
     sound_name = request.args.get('name')
     if sound_name is None:
         return 'Please provide the sound_name parameter', 400
