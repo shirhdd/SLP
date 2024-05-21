@@ -19,19 +19,85 @@ import pyttsx3
 
 from backend.charsiu.src.phoneme_replacement import Replacer
 
-THRESHOLD = 75
+
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask import request
+from werkzeug.security import check_password_hash
+
 
 app = Flask(__name__)
 CORS(app)
 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  # Use SQLite for simplicity
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(60), nullable=False)
+    points = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return f"User('{self.username}', '{self.email}', '{self.points}')"
+
+with app.app_context():
+    db.create_all()
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and check_password_hash(user.password, password):
+        return jsonify({'message': 'Logged in successfully'}), 200
+    else:
+        return jsonify({'message': 'Invalid email or password'}), 401
+
+from werkzeug.security import generate_password_hash
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+
+    hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+    new_user = User(username=username, email=email, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'New user created!'}), 201
+
+@app.route('/get_username', methods=['GET'])
+def get_username():
+    email = request.args.get('email')
+
+    if email is None:
+        return jsonify({'error': 'Email parameter is missing'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({'username': user.username}), 200
 
 phoneme_classification_model = load_model(
     r'C:\Users\inbal\Desktop\SLP\backend\samples\6-s-sh-r-l-f-p-4000V-phonemes_22_epoches.h5')
 
+THRESHOLD = 75
 
 phoneme_alignment_model = charsiu_forced_aligner(
     aligner='charsiu/en_w2v2_fc_10ms')
-
 
 def write_file_16k(file):
     # Load the audio file
@@ -226,6 +292,45 @@ def build_json_response(predictions, letter: str):
 #                                                                       insert_end * 1000:]
 #
 #     return modified_second_wav
+
+@app.route('/get_points', methods=['GET'])
+def get_points():
+    email = request.args.get('email')
+
+    if email is None:
+        return jsonify({'error': 'Email parameter is missing'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({'points': user.points}), 200
+
+@app.route('/update_points', methods=['POST'])
+def update_points():
+    data = request.get_json()
+    email = data.get('email')
+
+    points_to_add = data.get('points')
+
+    if email is None or points_to_add is None:
+        return jsonify({'error': 'Email or points parameter is missing'}), 400
+
+    try:
+        points_to_add = int(points_to_add)
+    except ValueError:
+        return jsonify({'error': 'Points parameter must be an integer'}), 400
+
+    user = User.query.filter_by(email=email).first()
+
+    if user is None:
+        return jsonify({'error': 'User not found'}), 404
+
+    user.points += points_to_add
+    db.session.commit()
+
+    return jsonify({'message': 'Points updated successfully', 'points': user.points}), 200
 
 
 @app.route('/get_correct_pronunciation', methods=['GET'])

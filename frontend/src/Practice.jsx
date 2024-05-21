@@ -5,6 +5,7 @@ import DragAndDrop from "./DragAndDrop.jsx";
 import Progressbar from "./Progressbar.jsx";
 import ArtificialAudio from "./ArtificialAudio.jsx";
 import Demo from "./Demo.jsx";
+import ArtficalUser from "./ArtficalUser.jsx";
 
 function Practice() {
     const [score, setScore] = useState(0);
@@ -52,7 +53,7 @@ function Practice() {
                 {/*{imageUrl && <img src={imageUrl} alt="Word visual representation" />}*/}
                 {response && <div>{response.message}</div>}
                 {response && <div>{response.phonemes}</div>}
-                <Demo word={"sing"}/>
+                <ArtficalUser word={"sing"}/>
             </div>
         </>
     );
