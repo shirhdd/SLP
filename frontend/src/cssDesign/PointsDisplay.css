@@ -1,0 +1,33 @@
+.points-display {
+    text-align: center;
+    margin: 50px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+.points-display h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #ff00da;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.count-up {
+    font-size: 5em;
+    font-family: 'Courier New', Courier, monospace;
+    color: #00ff3b;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
