@@ -37,3 +37,9 @@
 .menu-button:nth-child(3) {
     transform: rotate(-20deg) translate(-150px, 50px); /* Increase horizontal translation */
 }
+
+
+.menu-button:hover {
+    background-color: gold; /* Change background color to golden */
+    color: #ffffff;
+}

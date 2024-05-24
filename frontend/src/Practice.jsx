@@ -6,6 +6,7 @@ import Progressbar from "./Progressbar.jsx";
 import ArtificialAudio from "./ArtificialAudio.jsx";
 import Demo from "./Demo.jsx";
 import ArtficalUser from "./ArtficalUser.jsx";
+import Wheel from "./Wheel.jsx";
 
 function Practice() {
     const [score, setScore] = useState(0);
@@ -47,7 +48,7 @@ function Practice() {
                 <h1>Practice Area</h1>
                 <ArtificialAudio word={word}/>
                 {word && <div>Word: {word}</div>}
-                <RandomWord setWord={setWord}/>
+                <Wheel setWord={setWord}/>
                 <DragAndDrop setScore={setScore} word={word} setResponse={setResponse} />
                 <Progressbar percentage={percentage} />
                 {/*{imageUrl && <img src={imageUrl} alt="Word visual representation" />}*/}

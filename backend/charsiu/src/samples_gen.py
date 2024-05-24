@@ -75,6 +75,26 @@
 # # print(alignment)
 # # text = "FORGOTTEN TOO THE NAME OF GILLIAN THE LOVELY CAPTIVE"
 # print(sys.executable)
-intervals = [(1,2),'3',(7,6),'3']
-for interval, _,_,_ in intervals:
-    print(interval)
+
+import os
+from pydub import AudioSegment
+
+def convert_ogg_to_wav(folder_path):
+    for filename in os.listdir(folder_path):
+        if filename.endswith(".ogg"):
+            # Construct the full path to the .ogg file
+            ogg_file_path = os.path.join(folder_path, filename)
+            # Load the .ogg file
+            audio = AudioSegment.from_ogg(ogg_file_path)
+            # Set the sample rate to 16000
+            audio = audio.set_frame_rate(16000)
+            # Construct the new file name with .wav extension
+            wav_file_path = os.path.join(folder_path, os.path.splitext(filename)[0] + ".wav")
+            # Export the audio as a .wav file
+            audio.export(wav_file_path, format="wav")
+            print(f"Converted {filename} to {os.path.basename(wav_file_path)}")
+
+# Example usage
+folder_path = "C:\\Users\\inbal\\Desktop\\SLP\\backend\\samples\\s-sh-wav"
+convert_ogg_to_wav(folder_path)
+
