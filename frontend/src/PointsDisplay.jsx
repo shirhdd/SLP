@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CountUp from 'react-countup';
+// import CountUp from 'react-countup';
 import axios from 'axios';
 import './cssDesign/PointsDisplay.css'; // Import the CSS file
 
@@ -29,7 +29,7 @@ const PointsDisplay = ({ email }) => {
     return (
         <div className="points-display">
             <h1>Points</h1>
-            <CountUp className="count-up" start={0} end={points} duration={4.5} />
+            {/*<CountUp className="count-up" start={0} end={points} duration={4.5} />*/}
         </div>
     );
 };

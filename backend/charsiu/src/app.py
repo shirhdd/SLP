@@ -1,6 +1,6 @@
 import sys
 from io import BytesIO
-
+from werkzeug.security import generate_password_hash
 from pydub import AudioSegment
 import librosa
 import numpy as np
@@ -13,25 +13,22 @@ import tensorflow as tf
 import random
 from PIL import Image
 from gtts import gTTS
-
 from tensorflow.keras.models import load_model
 import pyttsx3
-
 from backend.charsiu.src.phoneme_replacement import Replacer
-
-
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask import request
 from werkzeug.security import check_password_hash
 
-
 app = Flask(__name__)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  # Use SQLite for simplicity
+app.config[
+    'SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  # Use SQLite for simplicity
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,6 +39,7 @@ class User(db.Model):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.points}')"
+
 
 with app.app_context():
     db.create_all()
@@ -60,7 +58,17 @@ def login():
     else:
         return jsonify({'message': 'Invalid email or password'}), 401
 
-from werkzeug.security import generate_password_hash
+
+
+@app.route('/get_users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    users_list = [
+        {'username': user.username, 'email': user.email, 'points': user.points}
+        for user in users
+    ]       
+    return jsonify(users_list)
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -77,6 +85,7 @@ def register():
 
     return jsonify({'message': 'New user created!'}), 201
 
+
 @app.route('/get_username', methods=['GET'])
 def get_username():
     email = request.args.get('email')
@@ -91,19 +100,22 @@ def get_username():
 
     return jsonify({'username': user.username}), 200
 
+
 phoneme_classification_model = load_model(
-    r'C:\Users\inbal\Desktop\SLP\backend\samples\6-s-sh-r-l-f-p-4000V-phonemes_22_epoches.h5')
+    r'C:\Users\shirh\PycharmProjects\SLP\backend\samples\4-s-sh-w-r-11_phonemes_22_epoches.h5')
 
 THRESHOLD = 75
 
 phoneme_alignment_model = charsiu_forced_aligner(
     aligner='charsiu/en_w2v2_fc_10ms')
 
+
 def write_file_16k(file):
     # Load the audio file
     original_sample_rate, audio = wavfile.read(file)
-    output_filename = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
-                                   'user_wav_processed.wav')
+    output_filename = os.path.join(
+        r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+        'user_wav_processed.wav')
     wavfile.write(output_filename, 16000, audio)
 
 
@@ -120,6 +132,7 @@ def preprocess(wav):
 
 # arr = ["s", "sh", "r", "w", "l", "f", "p", "th", "d", "t", "y"]
 arr = ["s", "sh", "r", "w", "l", "f", "p"]
+
 
 def load_file():
     # Load the audio file
@@ -156,7 +169,6 @@ def build_json_response(predictions, letter: str):
         'phonemes': [
             f"Your {top_phoneme} pronunciation gets a {top_score} score"]
     }
-
 
     # Check if second top phoneme's score is above 30%
     second_top_phoneme = arr[sorted_indices[1]]
@@ -307,6 +319,7 @@ def get_points():
 
     return jsonify({'points': user.points}), 200
 
+
 @app.route('/update_points', methods=['POST'])
 def update_points():
     data = request.get_json()
@@ -330,7 +343,8 @@ def update_points():
     user.points += points_to_add
     db.session.commit()
 
-    return jsonify({'message': 'Points updated successfully', 'points': user.points}), 200
+    return jsonify(
+        {'message': 'Points updated successfully', 'points': user.points}), 200
 
 
 @app.route('/get_correct_pronunciation', methods=['GET'])
@@ -344,6 +358,7 @@ def get_correct_pronunciation():
 
     # Return the file
     return send_file("word.mp3", as_attachment=True)
+
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -380,28 +395,32 @@ def predict():
 
 @app.route('/speech_inpainting', methods=['GET'])
 def speech_inpainting():
-
     word = request.args.get('word')  # Use request.args for GET parameters
 
     if word is None:
         return 'Word parameter not provided', 400
 
-    artificial_wav_path = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
-                                       'artificial-' + word + '.wav')
+    artificial_wav_path = os.path.join(
+        r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+        'artificial-' + word + '.wav')
     user_wav_path = r'C:\Users\inbal\Desktop\SLP\backend\samples\s-sh-wav\shing-6.wav'
-    replacer = Replacer(phoneme_alignment_model, phoneme_classification_model, "sing", artificial_wav_path,
+    replacer = Replacer(phoneme_alignment_model, phoneme_classification_model,
+                        "sing", artificial_wav_path,
                         user_wav_path)
     replacer.generate_artificial_wav()
-    output_filename = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
-                                   'user_wav_processed.wav')
+    output_filename = os.path.join(
+        r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+        'user_wav_processed.wav')
     user_alignment = replacer.aligner(output_filename)
     artificial_alignment = replacer.aligner(artificial_wav_path)
 
     idx = replacer.identify_error_v1(user_alignment, artificial_alignment)
     replacer.replace(user_alignment, artificial_alignment, idx, 16000)
-    fix_wav_path = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
-                                'fix.wav')
+    fix_wav_path = os.path.join(
+        r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+        'fix.wav')
     return send_file(fix_wav_path, as_attachment=True)
+
 
 # @app.route('/predict', methods=['POST'])
 # def predict():
@@ -451,7 +470,8 @@ def random_word():
 def random_words():
     words = ['fight', 'thing', 'white', 'write', 'sing', 'right', 'light']
     # words = ['sing','sing','sing','sing','sing','sing','sing','sing','sing','sing','sing']
-    selected_words = random.sample(words, min(len(words), 5))  # Safely select 4 words
+    selected_words = random.sample(words,
+                                   min(len(words), 5))  # Safely select 4 words
     return jsonify({'words': selected_words}), 200
 
 

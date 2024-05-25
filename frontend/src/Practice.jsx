@@ -5,7 +5,7 @@ import DragAndDrop from "./DragAndDrop.jsx";
 import Progressbar from "./Progressbar.jsx";
 import ArtificialAudio from "./ArtificialAudio.jsx";
 import Demo from "./Demo.jsx";
-import ArtficalUser from "./ArtficalUser.jsx";
+// import ArtficalUser from "./ArtficalUser.jsx";
 import Wheel from "./Wheel.jsx";
 
 function Practice() {
@@ -54,7 +54,7 @@ function Practice() {
                 {/*{imageUrl && <img src={imageUrl} alt="Word visual representation" />}*/}
                 {response && <div>{response.message}</div>}
                 {response && <div>{response.phonemes}</div>}
-                <ArtficalUser word={"sing"}/>
+                {/*<ArtficalUser word={"sing"}/>*/}
             </div>
         </>
     );
