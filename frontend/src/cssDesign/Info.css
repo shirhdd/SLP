@@ -1,0 +1,58 @@
+/* Info.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 0;
+}
+
+.info-container {
+    max-width: 800px;
+    margin: 50px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-image: url('../assets/info_background.jpg'); /* Add a background image */
+    background-size: cover; /* Cover the entire container */
+    background-position: center; /* Center the background image */
+}
+
+.info-title {
+    text-align: center;
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.description {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.developers-title {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.developers-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.developer-name {
+    font-size: 1.2em;
+    color: #333;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.error {
+    color: red;
+    text-align: center;
+}

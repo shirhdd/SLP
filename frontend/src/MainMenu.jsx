@@ -12,7 +12,7 @@ function MainMenu() {
             <img src={characterImage} alt="Character" className="character-image" />
             <PointsDisplay email={"email@email.com"}/>
             <div className="button-container">
-                <button className="menu-button" onClick={() => navigate('/demo')}>Demo</button>
+                <button className="menu-button" onClick={() => navigate('/info')}>Info</button>
                 <button className="menu-button" onClick={() => navigate('/practice')}>Start Practice</button>
                 <button className="menu-button" onClick={() => navigate('/scores')}>Scores</button>
             </div>

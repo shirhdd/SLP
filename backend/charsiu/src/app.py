@@ -66,9 +66,27 @@ def get_users():
     users_list = [
         {'username': user.username, 'email': user.email, 'points': user.points}
         for user in users
-    ]       
+    ]
     return jsonify(users_list)
 
+@app.route('/info', methods=['GET'])
+def info():
+    project_info = {
+        "title": "SLP Helper",
+        "description": (
+            "Welcome to SLP Helper! This application is designed to assist kids and "
+            "individuals in improving their Speech-Language Pathology (SLP) status. "
+            "Our app allows users to pronounce words and checks if the words are "
+            "pronounced correctly at the phoneme level. "
+            "Itay and Shir are the developers of this project, both are Electronic "
+            "Engineers and Computer Science students at the Hebrew University."
+        ),
+        "developers": [
+            {"name": "Shir Hadad"},
+            {"name": "Itay Yamin"}
+        ]
+    }
+    return jsonify(project_info)
 
 @app.route('/register', methods=['POST'])
 def register():

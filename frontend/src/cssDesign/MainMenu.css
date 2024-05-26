@@ -1,20 +1,32 @@
+/* MainMenu.css */
+
 .menu-container {
     position: relative;
     text-align: center;
-    background: #535bf2;
-
+    background: rgba(79, 149, 157, 0.7); /* Semi-transparent background for a modern look */
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    padding: 20px; /* Add some padding */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    border-radius: 10px; /* Rounded corners */
 }
 
 .character-image {
     width: 300px;
     height: auto;
     margin-bottom: 20px;
+    border-radius: 10px; /* Rounded corners for images */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }
 
 .button-container {
     position: relative;
     width: 100%;
-    height: 0px; /* This might need to be increased if buttons are too close vertically */
+    height: 200px; /* Increased height to space out buttons */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -23,8 +35,17 @@
 .menu-button {
     position: absolute;
     width: 100px;
-    height: auto;
-    transition: transform 0.3s;
+    height: 100px; /* Circular button */
+    border-radius: 50%; /* Make buttons circular */
+    border: none;
+    background-color: rgba(52, 73, 94, 0.9); /* Primary button color */
+    color: #ffffff; /* White text */
+    font-size: 16px; /* Larger font size */
+    cursor: pointer;
+    transition: transform 0.3s, background-color 0.3s; /* Smooth transition */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Adjusted translations for spreading out the buttons */
@@ -38,8 +59,11 @@
     transform: rotate(-20deg) translate(-150px, 50px); /* Increase horizontal translation */
 }
 
-
 .menu-button:hover {
-    background-color: gold; /* Change background color to golden */
-    color: #ffffff;
+    background-color: rgba(236, 8, 199, 0.84); /* Vibrant hover color */
+    color: #ffffff; /* White text on hover */
+}
+
+.menu-button:active {
+    background-color: rgba(41, 128, 185, 0.9); /* Different color on click */
 }

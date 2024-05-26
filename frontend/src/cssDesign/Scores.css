@@ -19,10 +19,10 @@ body {
     background-position: center; /* Center the background image */
 }
 
-.title {
+.score-title {
     text-align: center;
     font-size: 2.5em;
-    color: #f1f1f1;
+    color: #ffffff;
     margin-bottom: 20px;
 }
 
