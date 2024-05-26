@@ -6,6 +6,7 @@ import Demo from './Demo';
 import Scores from './Scores';
 import Info from './Info.jsx';
 import AuthForm from './AuthForm';
+import ProfilePage from './ProfilePage';
 import './App.css';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
                     <Route path="/practice" element={loggedIn ? <Practice/> : <Navigate to="/auth"/>}/>
                     <Route path="/auth" element={<AuthForm setLoggedIn={setLoggedIn}/>}/>
                     <Route path="/info" element={ <Info/>}/>
+                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/scores" element={ <Scores/>}/>
                 </Routes>
             </Router>

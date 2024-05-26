@@ -7,6 +7,7 @@ import ArtificialAudio from "./ArtificialAudio.jsx";
 import Demo from "./Demo.jsx";
 // import ArtficalUser from "./ArtficalUser.jsx";
 import Wheel from "./Wheel.jsx";
+import "./cssDesign/Practice.css"
 
 function Practice() {
     const [score, setScore] = useState(0);

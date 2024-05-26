@@ -22,7 +22,7 @@ from flask import request
 from werkzeug.security import check_password_hash
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'  # Use SQLite for simplicity
@@ -36,6 +36,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(60), nullable=False)
     points = db.Column(db.Integer, default=0)
+    avatar = db.Column(db.String(120), nullable=True)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}', '{self.points}')"
@@ -59,15 +60,16 @@ def login():
         return jsonify({'message': 'Invalid email or password'}), 401
 
 
-
 @app.route('/get_users', methods=['GET'])
 def get_users():
     users = User.query.all()
     users_list = [
-        {'username': user.username, 'email': user.email, 'points': user.points}
+        {'username': user.username, 'email': user.email, 'points': user.points,
+         'avatar': user.avatar}
         for user in users
     ]
     return jsonify(users_list)
+
 
 @app.route('/info', methods=['GET'])
 def info():
@@ -88,16 +90,19 @@ def info():
     }
     return jsonify(project_info)
 
+
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
     username = data.get('username')
     email = data.get('email')
     password = data.get('password')
+    avatar = data.get('avatar')
 
     hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-    new_user = User(username=username, email=email, password=hashed_password)
+    new_user = User(username=username, email=email, password=hashed_password,
+                    avatar=avatar)
     db.session.add(new_user)
     db.session.commit()
 

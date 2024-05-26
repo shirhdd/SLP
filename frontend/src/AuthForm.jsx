@@ -1,18 +1,31 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Container, Typography, Box, Switch, FormControlLabel } from '@mui/material';
+import { TextField, Button, Container, Typography, Box, Switch, FormControlLabel, Grid } from '@mui/material';
+import './cssDesign/AuthForm.css'; // Import the CSS file for styling
 
 function AuthForm({ setLoggedIn }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [isLogin, setIsLogin] = useState(true);
+    const [selectedAvatar, setSelectedAvatar] = useState('avatar1.webp'); // Default avatar
     const navigate = useNavigate();
+
+    // Define a list of avatar options
+    const avatarOptions = [
+        'avatar1.webp',
+        'avatar2.webp',
+        'avatar3.png',
+        'avatar4.webp',
+        // Add more avatar options as needed
+    ];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const url = isLogin ? 'http://localhost:5000/login' : 'http://localhost:5000/register';
-        const payload = isLogin ? { email, password } : { username, email, password };
+        const payload = isLogin
+            ? { email, password }
+            : { username, email, password, avatar: selectedAvatar }; // Include selected avatar
 
         try {
             const response = await fetch(url, {
@@ -54,15 +67,32 @@ function AuthForm({ setLoggedIn }) {
                 </Typography>
                 <form onSubmit={handleSubmit} style={{ width: '100%' }}>
                     {!isLogin && (
-                        <TextField
-                            label="Username"
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                        />
+                        <>
+                            <TextField
+                                label="Username"
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                            <Typography variant="h6" component="h2" gutterBottom>
+                                Select Avatar
+                            </Typography>
+                            <Grid container spacing={2} justifyContent="center">
+                                {avatarOptions.map((avatar) => (
+                                    <Grid item key={avatar}>
+                                        <img
+                                            src={`./src/assets/${avatar}`}
+                                            alt="Avatar"
+                                            className={`avatar-option ${selectedAvatar === avatar ? 'selected' : ''}`}
+                                            onClick={() => setSelectedAvatar(avatar)}
+                                        />
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </>
                     )}
                     <TextField
                         label="Email"

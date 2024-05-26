@@ -1,0 +1,51 @@
+/* Practice.css */
+
+.practice-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.practice-title {
+  color: #2c3e50;
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.practice-section {
+  margin-bottom: 40px;
+}
+
+.practice-section h2 {
+  color: #2980b9;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.practice-section p {
+  color: #34495e;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.practice-image {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.practice-response {
+  color: #27ae60;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.practice-phonemes {
+  color: #9b59b6;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
