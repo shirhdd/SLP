@@ -6,6 +6,9 @@ import PointsDisplay from "./PointsDisplay.jsx";
 function MainMenu() {
     const navigate = useNavigate();
 
+
+
+
     return (
         <div className="menu-container">
 

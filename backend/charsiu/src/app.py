@@ -108,6 +108,18 @@ def register():
 
     return jsonify({'message': 'New user created!'}), 201
 
+@app.route('/get_avatar', methods=['POST'])
+def get_avatar():
+    data = request.get_json()
+    email = data.get('email')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user:
+        return jsonify({'avatar': user.avatar}), 200
+    else:
+        return jsonify({'message': 'User not found'}), 404
+
 
 @app.route('/get_username', methods=['GET'])
 def get_username():
@@ -125,7 +137,7 @@ def get_username():
 
 
 phoneme_classification_model = load_model(
-    r'C:\Users\shirh\PycharmProjects\SLP\backend\samples\4-s-sh-w-r-11_phonemes_22_epoches.h5')
+    r'C:\Users\inbal\Desktop\SLP\backend\samples\4-s-sh-w-r-11_phonemes_22_epoches.h5')
 
 THRESHOLD = 75
 

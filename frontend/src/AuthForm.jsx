@@ -1,6 +1,9 @@
+// src/components/AuthForm.js
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Box, Switch, FormControlLabel, Grid } from '@mui/material';
+import { useAuth } from './AuthContext.jsx'
 import './cssDesign/AuthForm.css'; // Import the CSS file for styling
 
 function AuthForm({ setLoggedIn }) {
@@ -10,6 +13,7 @@ function AuthForm({ setLoggedIn }) {
     const [isLogin, setIsLogin] = useState(true);
     const [selectedAvatar, setSelectedAvatar] = useState('avatar1.webp'); // Default avatar
     const navigate = useNavigate();
+    const { dispatch } = useAuth(); // Use context dispatch
 
     // Define a list of avatar options
     const avatarOptions = [
@@ -40,6 +44,7 @@ function AuthForm({ setLoggedIn }) {
             if (response.ok) {
                 if (isLogin) {
                     setLoggedIn(true);
+                    dispatch({ type: 'LOGIN', payload: { email } }); // Update context
                     navigate('/');
                 } else {
                     alert(data.message);

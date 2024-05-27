@@ -15,7 +15,6 @@
     "@fireworks-js/react": "^2.10.7",
     "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.18",
-    "avataaars": "^2.0.0",
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "flowbite-react": "^0.9.0",

@@ -46,7 +46,6 @@ function Practice() {
     return (
         <>
             <div>
-                <h1>Practice Area</h1>
                 <ArtificialAudio word={word}/>
                 {word && <div>Word: {word}</div>}
                 <Wheel setWord={setWord}/>
