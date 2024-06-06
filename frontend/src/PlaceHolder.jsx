@@ -11,11 +11,11 @@ const Placeholder = ({location}) => {
     const { email } = state;
     const [avatar, setAvatar] = useState('');
     const locationToTitle = {
-        '/': 'Main Menu',
+        '/': '',
         '/practice': 'Game Time',
         '/info': 'Information',
         '/profile': 'Profile',
-        '/scores': 'Scores',
+        '/scores': '',
     };
     useEffect(() => {
         const fetchAvatar = async () => {

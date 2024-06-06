@@ -3,7 +3,7 @@
 .menu-container {
     position: relative;
     text-align: center;
-    background: rgba(79, 149, 157, 0.7); /* Semi-transparent background for a modern look */
+    background: rgb(231 233 233 / 70%); /* Semi-transparent background for a modern look */
     display: flex;
     flex-direction: column;
     justify-content: center; /* Center content vertically */
@@ -11,6 +11,8 @@
     padding: 20px; /* Add some padding */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
     border-radius: 10px; /* Rounded corners */
+    width:1000px;
+    height:auto;
 }
 
 .character-image {

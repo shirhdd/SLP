@@ -9,6 +9,7 @@ body {
 
 .info-container {
     max-width: 800px;
+    width: 900px;
     /*margin: 50px auto;*/
     background: #fff;
     padding: 20px;
@@ -31,8 +32,11 @@ body {
     font-size: 1.2em;
     color: #555;
     margin-bottom: 20px;
+    margin-top: 50px;
+    margin-right: 40px;
+    margin-left: 40px;
     height: 150px;
-    width: 625px;
+    width: 700px;
 }
 
 .developers-title {
@@ -44,7 +48,9 @@ body {
 .developers-list {
     list-style-type: none;
     padding: 0;
-
+    margin-bottom: 80px;
+    margin-right: 40px;
+    margin-left: 40px;
 }
 
 .developer-name {
