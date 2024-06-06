@@ -22,7 +22,7 @@ const Info = () => {
 
     return (
         <div className="info-container">
-            <h1 className="title">{info.title}</h1>
+            <h1 className="info-title">{info.title}</h1>
             <p className="description">{info.description}</p>
             <h2 className="developers-title">Developers</h2>
             {info.developers ? (

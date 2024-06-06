@@ -108,6 +108,7 @@ def register():
 
     return jsonify({'message': 'New user created!'}), 201
 
+
 @app.route('/get_avatar', methods=['POST'])
 def get_avatar():
     data = request.get_json()
@@ -137,7 +138,7 @@ def get_username():
 
 
 phoneme_classification_model = load_model(
-    r'C:\Users\inbal\Desktop\SLP\backend\samples\4-s-sh-w-r-11_phonemes_22_epoches.h5')
+    r'C:\Users\inbal\Desktop\SLP\backend\samples\new_models\s-shX2.h5')
 
 THRESHOLD = 75
 
@@ -395,6 +396,37 @@ def get_correct_pronunciation():
     return send_file("word.mp3", as_attachment=True)
 
 
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     if 'file' not in request.files:
+#         return jsonify({'error': 'No file part'}), 400
+#
+#     file = request.files['file']
+#
+#     if file.filename == '':
+#         return jsonify({'error': 'No selected file'}), 400
+#
+#     word = request.form.get('word')
+#
+#     if word is None:
+#         return 'Word parameter not provided', 400
+#
+#     if file and file.filename.endswith('.wav'):
+#         try:
+#             write_file_16k(file)
+#             alignment = phoneme_alignment_model.align(audio='processed_.wav',
+#                                                       text=word)
+#             audio_cut = process_file(alignment)
+#             spectrogram = create_spectrogram(audio_cut)
+#             predictions = phoneme_classification_model.predict(spectrogram)
+#             response = build_json_response(predictions, word[0])
+#             return response
+#
+#         except Exception as e:
+#             return jsonify(
+#                 {'error': 'Failed to process file', 'details': str(e)}), 500
+#     else:
+#         return None, jsonify({'error': 'Invalid file format'}), 400
 @app.route('/predict', methods=['POST'])
 def predict():
     if 'file' not in request.files:
@@ -413,12 +445,21 @@ def predict():
     if file and file.filename.endswith('.wav'):
         try:
             write_file_16k(file)
-            alignment = phoneme_alignment_model.align(audio='processed_.wav',
-                                                      text=word)
-            audio_cut = process_file(alignment)
-            spectrogram = create_spectrogram(audio_cut)
-            predictions = phoneme_classification_model.predict(spectrogram)
-            response = build_json_response(predictions, word[0])
+
+            artificial_wav_path = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                                               'artificial-' + word + '.wav')
+            user_wav_path = os.path.join(
+                r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                'user_wav_processed.wav')
+            replacer = Replacer(phoneme_alignment_model, phoneme_classification_model, word, artificial_wav_path,
+                                user_wav_path)
+            replacer.write_file_16k()
+            output_filename = os.path.join(r'C:\Users\inbal\Desktop\SLP\backend\charsiu\src\files',
+                                           'user_wav_processed.wav')
+            align = replacer.aligner(output_filename)
+            pred = replacer.identify_error_v1(align, 2)
+
+            response = build_json_response(pred, word[0])
             return response
 
         except Exception as e:
@@ -503,8 +544,8 @@ def random_word():
 
 @app.route('/random_words', methods=['GET'])  # Updated endpoint name
 def random_words():
-    words = ['fight', 'thing', 'white', 'write', 'sing', 'right', 'light']
-    # words = ['sing','sing','sing','sing','sing','sing','sing','sing','sing','sing','sing']
+    # words = ['fight', 'thing', 'white', 'write', 'sing', 'right', 'light']
+    words = ['sing', 'sing', 'song', 'song', 'sang', 'sang']
     selected_words = random.sample(words,
                                    min(len(words), 5))  # Safely select 4 words
     return jsonify({'words': selected_words}), 200

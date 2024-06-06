@@ -92,12 +92,12 @@ class Replacer:
         user_audio_cut = ReplaceUtils.process_file(user_alignment, user_processed_wav)
         user_spectrogram = ReplaceUtils.create_spectrogram(user_audio_cut)
         predictions = self.phoneme_classification_model.predict(user_spectrogram)
-        def format_predictions(predictions):
-            return [f"{pred[0] * 100:.2f}% {pred[1] * 100:.2f}%" for pred in predictions]
-        print(f"Predictions for user audio: {format_predictions(predictions)}")
+        # def format_predictions(predictions):
+        #     return [f"{pred[0] * 100:.2f}% {pred[1] * 100:.2f}%" for pred in predictions]
+        # print(f"Predictions for user audio: {format_predictions(predictions)}")
         # todo: add here if on prediction to check if the first is not good
 
-        return 0
+        return predictions
 
 
 

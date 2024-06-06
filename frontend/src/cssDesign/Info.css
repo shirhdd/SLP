@@ -24,12 +24,15 @@ body {
     font-size: 2.5em;
     color: #555;
     margin-bottom: 20px;
+
 }
 
 .description {
     font-size: 1.2em;
     color: #555;
     margin-bottom: 20px;
+    height: 150px;
+    width: 625px;
 }
 
 .developers-title {
@@ -41,6 +44,7 @@ body {
 .developers-list {
     list-style-type: none;
     padding: 0;
+
 }
 
 .developer-name {

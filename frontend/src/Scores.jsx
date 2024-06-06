@@ -40,14 +40,19 @@ const Scores = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {users.map((user, index) => (
-                        <tr key={index}>
-                            <td>{index + 1}</td>  {/* Rank based on index */}
-                            <td>{user.username}</td>
-                            <td>{user.points}</td>
-                        </tr>
-                    ))}
+                    {users
+                        .slice() // create a shallow copy of the users array to avoid mutating the original array
+                        .sort((a, b) => b.points - a.points) // sort users by points in descending order
+                        .map((user, index) => (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                {/* Rank based on index */}
+                                <td>{user.username}</td>
+                                <td>{user.points}</td>
+                            </tr>
+                        ))}
                     </tbody>
+
                 </table>
             )}
         </div>

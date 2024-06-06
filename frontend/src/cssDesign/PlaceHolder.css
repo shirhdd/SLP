@@ -1,0 +1,27 @@
+/* Placeholder.css */
+.placeholder {
+    display: flex;
+    justify-content: space-between;
+    background-color: #1400ff; /* Example background color */
+}
+
+.left-button,
+.right-button {
+    background-color: rgba(255, 255, 255, 0);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.left-button {
+    align-self: flex-start;
+}
+
+.right-button {
+    align-self: flex-end;
+}
+.title {
+    color: #fce901;
+    font-size: 36px; /* Adjust the size as needed */
+    font-family: Arial, sans-serif; /* Change the font family as needed */
+}
