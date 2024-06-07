@@ -202,25 +202,9 @@ def build_json_response(predictions, letter: str):
     top_score = predictions[sorted_indices[0]]
 
     response = {
-        'phonemes': [
-            f"Your {top_phoneme} pronunciation gets a {top_score} score"]
+        'target': letter,
+        'top_phoneme': top_phoneme
     }
-
-    # Check if second top phoneme's score is above 30%
-    second_top_phoneme = arr[sorted_indices[1]]
-    second_top_score = predictions[sorted_indices[1]]
-    if second_top_score > 30:
-        response['phonemes'].append(
-            f"Your {second_top_phoneme} pronunciation gets a {second_top_score} score")
-
-    if top_score >= THRESHOLD and top_phoneme == letter:
-        # When the top score is above the threshold, include a successful message
-        response['message'] = "Great job!"
-    else:
-        # When the top score is below the threshold, include an encouragement message
-        response[
-            'message'] = f'Come on, you can do better! notice your {letter} pronunciation'
-
     return jsonify(response), 200
 
 

@@ -52,8 +52,7 @@ function Practice() {
                 <DragAndDrop setScore={setScore} word={word} setResponse={setResponse} />
                 <Progressbar percentage={percentage} />
                 {/*{imageUrl && <img src={imageUrl} alt="Word visual representation" />}*/}
-                {response && <div>{response.message}</div>}
-                {response && <div>{response.phonemes}</div>}
+                <div>{response}</div>
                 {/*<ArtficalUser word={"sing"}/>*/}
             </div>
         </>

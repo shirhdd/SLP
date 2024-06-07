@@ -9,6 +9,14 @@ function DragAndDropComponent({word, setScore, setResponse}) {
     const [error, setError] = useState('');
     const [fileUploaded, setFileUploaded] = useState(false);
 
+    const responseLogic = (response) => {
+        console.log("this is resposnse: ", response)
+        if (response.top_phoneme === response.target) {
+            return `Positive feedback: You pronounced the '${response.target}' phoneme correctly!`;
+        } else {
+            return `Feedback: You did not pronounce the target phoneme '${response.target}' correctly.`;
+        }
+    };
     const onDrop = useCallback(acceptedFiles => {
         const file = acceptedFiles[0];
         if (file && file.type === 'audio/wav') {
@@ -41,7 +49,7 @@ function DragAndDropComponent({word, setScore, setResponse}) {
                     }
                 });
                 console.log(response.data);
-                setResponse(response.data)
+                setResponse(responseLogic(response.data))
                 // Increment score by 10 upon successful response
                 setScore(prevScore => prevScore + 10);
             } catch (error) {
