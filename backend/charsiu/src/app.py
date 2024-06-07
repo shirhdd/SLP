@@ -74,7 +74,7 @@ def get_users():
 @app.route('/info', methods=['GET'])
 def info():
     project_info = {
-        "title": "SLP Helper",
+        "title": "",
         "description": (
             "Welcome to SLP Helper! This application is designed to assist kids and "
             "individuals in improving their Speech-Language Pathology (SLP) status. "
@@ -138,7 +138,7 @@ def get_username():
 
 
 phoneme_classification_model = load_model(
-    r'C:\Users\inbal\Desktop\SLP\backend\samples\new_models\s-shX2.h5')
+    r'C:\Users\shirh\PycharmProjects\SLP\backend\samples\s-shX2.h5')
 
 THRESHOLD = 75
 

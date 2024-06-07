@@ -2,7 +2,7 @@
 .placeholder {
     display: flex;
     justify-content: space-between;
-    background-color: #1400ff; /* Example background color */
+    background-color: #b9424e; /* Example background color */
 }
 
 .left-button,
@@ -21,7 +21,7 @@
     align-self: flex-end;
 }
 .title {
-    color: #fce901;
+    color: #000000;
     font-size: 36px; /* Adjust the size as needed */
-    font-family: Arial, sans-serif; /* Change the font family as needed */
+    font-family: fantasy; /* Change the font family as needed */
 }
