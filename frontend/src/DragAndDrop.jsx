@@ -1,7 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners';  // Import a spinner from react-spinners
+import { ClipLoader } from 'react-spinners';
+import Feedback from "./Feedback.jsx";
+import Feedback2 from "./Feedback2.jsx";
 
 function DragAndDropComponent({word, setScore, setResponse}) {
     const [file, setFile] = useState(null);
@@ -12,11 +14,15 @@ function DragAndDropComponent({word, setScore, setResponse}) {
     const responseLogic = (response) => {
         console.log("this is resposnse: ", response)
         if (response.top_phoneme === response.target) {
-            return `Positive feedback: You pronounced the '${response.target}' phoneme correctly!`;
+            return <Feedback2 text={`You pronounced the '${response.target}' phoneme correctly!`} status={'good'} />
         } else {
-            return `Feedback: You did not pronounce the target phoneme '${response.target}' correctly.`;
+            return <Feedback2 text={`You did not pronounce the target phoneme '${response.target}' correctly.`} status={'bad'} />
         }
     };
+
+    const increasePoints = (response) =>{
+        return response.top_phoneme === response.target;
+    }
     const onDrop = useCallback(acceptedFiles => {
         const file = acceptedFiles[0];
         if (file && file.type === 'audio/wav') {
@@ -50,8 +56,9 @@ function DragAndDropComponent({word, setScore, setResponse}) {
                 });
                 console.log(response.data);
                 setResponse(responseLogic(response.data))
-                // Increment score by 10 upon successful response
-                setScore(prevScore => prevScore + 10);
+                if (increasePoints(response.data)) {
+                    setScore(prevScore => prevScore + 10);
+                }
             } catch (error) {
                 console.error('Error submitting the file:', error);
                 alert('Error submitting the file');

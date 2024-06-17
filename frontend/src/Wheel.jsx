@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Wheel as RouletteWheel } from 'react-custom-roulette';
 import './cssDesign/Wheel.css';
+import Feedback2 from "./Feedback2.jsx";
 // Import your audio file if using Create React App and static file handling
 // import spinSound from './assets/sound/spinner-sound.mp3'; // Adjust the path as necessary
 
 // eslint-disable-next-line react/prop-types
-function Wheel({ setWord }) {
+function Wheel({ setWord, setResponse}) {
     const [words, setWords] = useState(["example - 1", "example - 2", "example - 3", "example - 4"]);
     const [mustStartSpinning, setMustStartSpinning] = useState(false);
     const [prizeNumber, setPrizeNumber] = useState(0);
@@ -37,6 +38,7 @@ function Wheel({ setWord }) {
 
     const handleSpinClick = () => {
         setIsInitialLoad(false);
+        setResponse(<Feedback2 text={`Let's see what you've got`} status={'waiting'} />)
         fetchWords();
         // spinAudio.play(); // Play the spin sound when starting the spin
     };

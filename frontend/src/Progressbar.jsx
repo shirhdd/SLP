@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ProgressBar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Fireworks } from '@fireworks-js/react';
 
 function Progressbar({ percentage }) {
+    const fireworksRef = useRef(null);
+
     // Define the emojis for specific percentage milestones
     const getEmoji = () => {
         if (percentage >= 100) {
@@ -30,8 +32,24 @@ function Progressbar({ percentage }) {
         return '';  // No emoji for less than 10%
     };
 
+    useEffect(() => {
+        if (percentage >= 100) {
+            if (fireworksRef.current) {
+                fireworksRef.current.start();
+            }
+
+            const timer = setTimeout(() => {
+                if (fireworksRef.current) {
+                    fireworksRef.current.stop();
+                }
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [percentage]);
+
     return (
-        <div style={{width: '100%', margin: '20px auto', position: 'relative'}}>
+        <div style={{ width: '100%', margin: '20px auto', position: 'relative' }}>
             <ProgressBar
                 animated
                 now={percentage}
@@ -44,11 +62,12 @@ function Progressbar({ percentage }) {
                     borderColor: '#0081ff'
                 }}
             />
-            <div style={{position: 'absolute', top: '0', right: '10px', fontSize: '20px'}}>
+            <div style={{ position: 'absolute', top: '0', right: '10px', fontSize: '20px' }}>
                 {getEmoji()}
             </div>
             {percentage >= 100 && (
                 <Fireworks
+                    ref={fireworksRef}
                     options={{ speed: 3 }}
                     style={{
                         top: 0,
@@ -56,7 +75,8 @@ function Progressbar({ percentage }) {
                         width: '100%',
                         height: '100%',
                         position: 'fixed',
-                        background: 'transparent'
+                        background: 'transparent',
+                        pointerEvents: 'none' // Allow mouse events to pass through
                     }}
                 />
             )}
